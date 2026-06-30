@@ -70,7 +70,7 @@ const PLANTAS = [
     categoria:"huerta",
     diasRiego:2,
     luz: "Sol directo",
-    mesesSiembra:"Agosto a Octubre",
+    mesesSiembra:"Primavera",
     dificultad:"Media",
     descripcion: "Planta muy cultivada que produce frutos jugosos, usados en muchas comidas. Crece bastante y necesita soporte para sostener sus tallos.",
     cuidados: "Colocar soporte para que crezca recta y usar suelo bien drenado. Regar sin encharcar y podar algunos brotes para mejorar la producción.",
