@@ -25,12 +25,27 @@ function cargarUsuario()   { return JSON.parse(localStorage.getItem('ru-usuario'
 //  HEMISFERIO (localStorage)
 // ══════════════════════════════════════════════════════
 
-function elegirHemisferio(opcion) {
+async function elegirHemisferio(opcion) {
   hemisferio = opcion;
   localStorage.setItem('ru-hemisferio', opcion);
+
+  try {
+    await fetch(`${API}/actualizar_hemisferio.php`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        usuario_id: usuarioActual.id,
+        hemisferio: opcion
+      })
+    });
+  } catch (error) {
+    console.error(error);
+  }
+
   cerrarModal('modal-hemisferio');
 }
-
 function cargarHemisferio() {
   hemisferio = localStorage.getItem('ru-hemisferio') || 'sur';
 }
