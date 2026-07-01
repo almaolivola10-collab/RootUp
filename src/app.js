@@ -26,11 +26,14 @@ function cargarUsuario()   { return JSON.parse(localStorage.getItem('ru-usuario'
 // ══════════════════════════════════════════════════════
 
 async function elegirHemisferio(opcion) {
+  console.log(usuarioActual);
+  console.log(opcion);
+
   hemisferio = opcion;
   localStorage.setItem('ru-hemisferio', opcion);
 
   try {
-    await fetch(`${API}/actualizar_hemisferio.php`, {
+    const respuesta = await fetch(`${API}/actualizar_hemisferio.php`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -40,16 +43,20 @@ async function elegirHemisferio(opcion) {
         hemisferio: opcion
       })
     });
+
+    const datos = await respuesta.json();
+    console.log(datos);
+
   } catch (error) {
     console.error(error);
   }
 
   cerrarModal('modal-hemisferio');
 }
+
 function cargarHemisferio() {
   hemisferio = localStorage.getItem('ru-hemisferio') || 'sur';
 }
-
 // ══════════════════════════════════════════════════════
 //  FAVORITOS (MySQL)
 // ══════════════════════════════════════════════════════
