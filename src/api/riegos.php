@@ -25,6 +25,14 @@ if ($metodo === 'POST') {
     $ins->bind_param("iis", $usuarioId, $plantaId, $fechaRiego);
 
     if ($ins->execute()) {
+        $upd = $conexion->prepare("
+    UPDATE mis_plantas
+    SET ultimo_riego = ?
+    WHERE usuario_id = ? AND planta_id = ?
+");
+
+$upd->bind_param("sii", $fechaRiego, $usuarioId, $plantaId);
+$upd->execute();
         echo json_encode(["exito" => true, "mensaje" => "Riego registrado"]);
     } else {
         echo json_encode(["exito" => false, "mensaje" => "Error al registrar"]);
