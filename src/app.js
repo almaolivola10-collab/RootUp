@@ -252,10 +252,18 @@ async function registrarUsuario() {
   const exitoDiv = document.getElementById('registro-exito');
 
   if (!nombre || !email || !password) {
-    errorDiv.textContent = 'Completá todos los campos';
-    exitoDiv.textContent = '';
-    return;
-  }
+  errorDiv.textContent = 'Completá todos los campos';
+  exitoDiv.textContent = '';
+  return;
+}
+
+// Validar formato de email
+const formatoEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!formatoEmail.test(email)) {
+  errorDiv.textContent = 'Ingresá un email válido (ej: nombre@gmail.com)';
+  exitoDiv.textContent = '';
+  return;
+}
 
   if (password.length < 6) {
     errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
@@ -278,6 +286,11 @@ async function registrarUsuario() {
       exitoDiv.textContent = '¡Cuenta creada! Elegí tu hemisferio.';
       usuarioActual = datos.usuario;
       guardarUsuario(datos.usuario);
+      // Enviar email de bienvenida
+      emailjs.send('service_1qqksvq', 'template_qbcqvzk', {
+      nombre:        nombre,
+      email_usuario: email
+}).catch(err => console.error('Error enviando email:', err));
 
       // Mostrar selector de hemisferio y luego ir al inicio
       setTimeout(() => {
@@ -781,7 +794,7 @@ function cerrarModal(id) {
 // ══════════════════════════════════════════════════════
 //  INICIO DE LA APP
 // ══════════════════════════════════════════════════════
-
+emailjs.init('gR1az2PRfTIZYX3BC');
 cargarHemisferio();
 usuarioActual = cargarUsuario();
 

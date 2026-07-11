@@ -22,6 +22,10 @@ if ($existe->num_rows > 0) {
     echo json_encode(["exito" => false, "mensaje" => "Ya existe una cuenta con ese email"]);
     exit();
 }
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    echo json_encode(["exito" => false, "mensaje" => "El email no es válido"]);
+    exit();
+}
 
 // Encriptar contraseña y guardar usuario
 $pass = password_hash($password, PASSWORD_DEFAULT);
