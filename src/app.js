@@ -70,7 +70,7 @@ async function cargarPlantas() {
         nombre:            p.nombre,
         cientifico:        p.cientifico,
         emoji:             p.emoji,
-        categoria:         p.categoria,
+        categoria:         p.categoria ? p.categoria.split(',').map(t => t.trim()) : [],
         diasRiego:         p.dias_riego,
         luz:               p.luz,
         mesesSiembra:      p.meses_siembra_sur,
