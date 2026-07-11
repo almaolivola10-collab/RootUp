@@ -676,11 +676,14 @@ function abrirDetalle(id) {
     : p.mesesSiembra;
 
   document.getElementById('modal-planta-contenido').innerHTML = `
-    <div class="detalle-hero">
-      <div class="detalle-emoji">${p.emoji}</div>
-      <div class="detalle-nombre">${p.nombre}</div>
-      <div class="detalle-cientifico">${p.cientifico}</div>
-    </div>
+  <div class="detalle-hero">
+  ${p.imagen
+    ? `<img src="${p.imagen}" alt="${p.nombre}" style="width:100%; height:200px; object-fit:cover; border-radius:12px; margin-bottom:12px;">`
+    : `<div class="detalle-emoji">${p.emoji}</div>`
+  }
+  <div class="detalle-nombre">${p.nombre}</div>
+  <div class="detalle-cientifico">${p.cientifico}</div>
+</div>
     <div class="detalle-fichas">
       <div class="ficha">
         <div class="ficha-icono">💧</div>
