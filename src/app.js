@@ -52,6 +52,7 @@ async function elegirHemisferio(opcion) {
   }
 
   cerrarModal('modal-hemisferio');
+   irA('inicio');
 }
 
 function cargarHemisferio() {
@@ -251,9 +252,8 @@ async function registrarUsuario() {
 
       // Mostrar selector de hemisferio y luego ir al inicio
       setTimeout(() => {
-        document.getElementById('modal-hemisferio').classList.remove('hidden');
-        setTimeout(() => irA('inicio'), 800);
-      }, 1000);
+  document.getElementById('modal-hemisferio').classList.remove('hidden');
+}, 1000);
 
     } else {
       errorDiv.textContent = datos.mensaje;

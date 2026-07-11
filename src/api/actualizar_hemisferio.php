@@ -1,7 +1,11 @@
 <?php
 require_once 'conexion.php';
 
-$datos = json_decode(file_get_contents("php://input"), true);
+$input = file_get_contents("php://input");
+$datos = null;
+if (!empty($input)) $datos = json_decode($input, true);
+if (empty($datos))  { parse_str($input, $datos); }
+if (empty($datos))  $datos = $_POST;
 
 $id = $datos['usuario_id'] ?? 0;
 $hemisferio = $datos['hemisferio'] ?? '';
