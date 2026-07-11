@@ -10,6 +10,7 @@ let usuarioActual   = null;    // Datos del usuario logueado
 let hemisferio      = null;    // 'sur' o 'norte'
 let favoritosCache  = [];      // IDs de favoritos cargados desde MySQL
 let misPlantasCache = [];      // Plantas propias cargadas desde MySQL
+let PLANTAS = [];  // Se carga desde MySQL en vez de datos.js
 
 // ─── URL base de los archivos PHP ────────────────────
 const API = './api';
@@ -57,6 +58,34 @@ async function elegirHemisferio(opcion) {
 
 function cargarHemisferio() {
   hemisferio = localStorage.getItem('ru-hemisferio') || 'sur';
+}
+async function cargarPlantas() {
+  try {
+    const r = await fetch(`${API}/plantas.php`);
+    const d = await r.json();
+    if (d.exito && Array.isArray(d.plantas)) {
+      // Adaptar los nombres de campos de MySQL al formato que usa la app
+      PLANTAS = d.plantas.map(p => ({
+        id:                p.id,
+        nombre:            p.nombre,
+        cientifico:        p.cientifico,
+        emoji:             p.emoji,
+        categoria:         p.categoria,
+        diasRiego:         p.dias_riego,
+        luz:               p.luz,
+        mesesSiembra:      p.meses_siembra_sur,
+        mesesSiembraNorte: p.meses_siembra_norte,
+        dificultad:        p.dificultad,
+        descripcion:       p.descripcion,
+        cuidados:          p.cuidados,
+        curiosidad:        p.curiosidad,
+        imagen:            p.imagen,
+        tags:              p.tags ? p.tags.split(',').map(t => t.trim()) : []
+      }));
+    }
+  } catch (e) {
+    console.error('Error cargando plantas:', e);
+  }
 }
 // ══════════════════════════════════════════════════════
 //  FAVORITOS (MySQL)
@@ -756,9 +785,11 @@ function cerrarModal(id) {
 cargarHemisferio();
 usuarioActual = cargarUsuario();
 
-if (usuarioActual) {
-  // Ya estaba logueado: cargar datos y entrar
-  Promise.all([cargarFavoritas(), cargarMisPlantas()]).then(() => irA('inicio'));
-} else {
-  irA('login');
-}
+// Primero cargar las plantas desde MySQL, después iniciar la app
+cargarPlantas().then(() => {
+  if (usuarioActual) {
+    Promise.all([cargarFavoritas(), cargarMisPlantas()]).then(() => irA('inicio'));
+  } else {
+    irA('login');
+  }
+});
