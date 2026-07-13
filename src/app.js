@@ -677,10 +677,22 @@ function abrirDetalle(id) {
 
   document.getElementById('modal-planta-contenido').innerHTML = `
   <div class="detalle-hero">
-  ${p.imagen
-    ? `<img src="${p.imagen}" alt="${p.nombre}" style="width:100%; height:200px; object-fit:cover; border-radius:12px; margin-bottom:12px;">`
-    : `<div class="detalle-emoji">${p.emoji}</div>`
+  ${p.imagen ? (() => {
+  const imgs = p.imagen.split(',').map(u => u.trim()).filter(Boolean);
+  if (imgs.length === 1) {
+    return `<img src="${imgs[0]}" alt="${p.nombre}" style="width:100%; height:200px; object-fit:cover; border-radius:12px; margin-bottom:12px;">`;
   }
+  return `
+    <div class="swiper detalle-swiper" style="border-radius:12px; margin-bottom:12px;">
+      <div class="swiper-wrapper">
+        ${imgs.map(url => `
+          <div class="swiper-slide">
+            <img src="${url}" alt="${p.nombre}" style="width:100%; height:200px; object-fit:cover;">
+          </div>`).join('')}
+      </div>
+      <div class="swiper-pagination"></div>
+    </div>`;
+})() : `<div class="detalle-emoji">${p.emoji}</div>`}
   <div class="detalle-nombre">${p.nombre}</div>
   <div class="detalle-cientifico">${p.cientifico}</div>
 </div>
@@ -728,6 +740,16 @@ function abrirDetalle(id) {
     </div>`;
 
   document.getElementById('modal-planta').classList.remove('hidden');
+  // Inicializar el carrusel si existe
+setTimeout(() => {
+  const swiperEl = document.querySelector('.detalle-swiper');
+  if (swiperEl) {
+    new Swiper('.detalle-swiper', {
+      pagination: { el: '.swiper-pagination', clickable: true },
+      loop: true
+    });
+  }
+}, 100);
 }
 
 function agregarDesdeDetalle(plantaId) {
