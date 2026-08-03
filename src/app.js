@@ -80,7 +80,8 @@ async function cargarPlantas() {
         cuidados:          p.cuidados,
         curiosidad:        p.curiosidad,
         imagen:            p.imagen,
-        tags:              p.tags ? p.tags.split(',').map(t => t.trim()) : []
+        tags:              p.tags ? p.tags.split(',').map(t => t.trim()) : [],
+        advertencia:       p.advertencia || null,
       }));
     }
   } catch (e) {
@@ -694,6 +695,10 @@ function abrirDetalle(id) {
     </div>`;
 })() : `<div class="detalle-emoji">${p.emoji}</div>`}
   <div class="detalle-nombre">${p.nombre}</div>
+  ${p.advertencia ? `
+  <div style="background:#fdeaea; color:#c0392b; border:1px solid #e74c3c; border-radius:8px; padding:8px 12px; font-size:13px; margin:8px 0; text-align:center;">
+    ⚠️ ${p.advertencia}
+  </div>` : ''}
   <div class="detalle-cientifico">${p.cientifico}</div>
 </div>
     <div class="detalle-fichas">
