@@ -791,6 +791,7 @@ async function cargarVariedades(plantaId) {
 function mostrarVariedad(v) {
   document.getElementById('modal-planta-contenido').innerHTML = `
     <button onclick="cerrarModal('modal-planta')" style="position:absolute;top:14px;right:14px;background:var(--fondo);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--texto-suave);">✕</button>
+    <button onclick="abrirDetalle(${v.planta_id})" style="position:absolute;top:14px;left:14px;background:var(--fondo);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--texto-suave);">←</button>
 
     <div class="detalle-hero">
       ${v.imagen
