@@ -671,7 +671,7 @@ function abrirDetalle(id) {
   if (!p) return;
 
   const fav             = favoritosCache.includes(id);
-  const dificultadColor = p.dificultad === 'Fácil' ? 'var(--verde-medio)' : 'var(--amarillo)';
+  const dificultadColor = p.dificultad === 'Fácil' ? 'var(--verde-medio)' : p.dificultad === 'Media' ? 'var(--amarillo)' : 'var(--rojo)';
   const meses           = hemisferio === 'norte' && p.mesesSiembraNorte
     ? p.mesesSiembraNorte
     : p.mesesSiembra;
@@ -820,7 +820,7 @@ function mostrarVariedad(v) {
       <div class="ficha">
         <div class="ficha-icono">⭐</div>
         <div class="ficha-label">Dificultad</div>
-        <div class="ficha-valor">${v.dificultad || 'No especificado'}</div>
+       <div class="ficha-valor" style="color:${v.dificultad === 'Fácil' ? 'var(--verde-medio)' : v.dificultad === 'Media' ? 'var(--amarillo)' : v.dificultad === 'Difícil' ? 'var(--rojo)' : 'var(--texto)'}">${v.dificultad || 'No especificado'}</div>
       </div>
     </div>
 
