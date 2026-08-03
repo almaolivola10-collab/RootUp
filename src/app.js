@@ -735,6 +735,9 @@ function abrirDetalle(id) {
       <h4>¿Sabías que...?</h4>
       <p style="font-style:italic; color:var(--verde-medio)">${p.curiosidad}</p>
     </div>
+
+    <div id="variedades-contenedor"></div>
+
     <div class="detalle-acciones">
       <button class="btn-accion-outline" onclick="toggleFavoritaDesdeDetalle(${p.id})" id="btn-fav-detalle">
         ${fav ? '❤️ En favoritas' : '🤍 Agregar favorita'}
@@ -743,8 +746,9 @@ function abrirDetalle(id) {
         🪴 Agregar a mis plantas
       </button>
     </div>`;
-
   document.getElementById('modal-planta').classList.remove('hidden');
+  // Cargar variedades si existen
+cargarVariedades(p.id);
   // Inicializar el carrusel si existe
 setTimeout(() => {
   const swiperEl = document.querySelector('.detalle-swiper');
@@ -755,6 +759,85 @@ setTimeout(() => {
     });
   }
 }, 100);
+}
+async function cargarVariedades(plantaId) {
+  try {
+    const r = await fetch(`${API}/variedades.php?planta_id=${plantaId}`);
+    const d = await r.json();
+
+    const contenedor = document.getElementById('variedades-contenedor');
+    if (!contenedor) return;
+
+    if (!d.exito || d.variedades.length === 0) {
+      contenedor.innerHTML = '';
+      return;
+    }
+
+    contenedor.innerHTML = `
+      <div class="detalle-seccion">
+        <h4>Variedades</h4>
+        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;">
+          ${d.variedades.map(v => `
+            <button class="filtro-btn" onclick="mostrarVariedad(${JSON.stringify(v).replace(/"/g, '&quot;')})">
+              ${v.emoji || '🌿'} ${v.nombre}
+            </button>`).join('')}
+        </div>
+      </div>`;
+  } catch (e) {
+    console.error('Error cargando variedades:', e);
+  }
+}
+
+function mostrarVariedad(v) {
+  document.getElementById('modal-planta-contenido').innerHTML = `
+    <button onclick="cerrarModal('modal-planta')" style="position:absolute;top:14px;right:14px;background:var(--fondo);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px;color:var(--texto-suave);">✕</button>
+
+    <div class="detalle-hero">
+      ${v.imagen
+        ? `<img src="${v.imagen}" alt="${v.nombre}" style="width:100%; height:200px; object-fit:cover; border-radius:12px; margin-bottom:12px;">`
+        : `<div class="detalle-emoji">🌿</div>`}
+      <div class="detalle-nombre">${v.nombre}</div>
+      <div class="detalle-cientifico">${v.cientifico || ''}</div>
+    </div>
+
+    <div class="detalle-fichas">
+      <div class="ficha">
+        <div class="ficha-icono">💧</div>
+        <div class="ficha-label">Riego</div>
+        <div class="ficha-valor">Cada ${v.dias_riego} días</div>
+      </div>
+      <div class="ficha">
+        <div class="ficha-icono">☀️</div>
+        <div class="ficha-label">Luz</div>
+        <div class="ficha-valor">${v.luz || 'No especificado'}</div>
+      </div>
+      <div class="ficha">
+        <div class="ficha-icono">📅</div>
+        <div class="ficha-label">Mejor época</div>
+        <div class="ficha-valor">${hemisferio === 'norte' && v.meses_siembra_norte ? v.meses_siembra_norte : v.meses_siembra_sur || 'No especificado'}</div>
+      </div>
+      <div class="ficha">
+        <div class="ficha-icono">⭐</div>
+        <div class="ficha-label">Dificultad</div>
+        <div class="ficha-valor">${v.dificultad || 'No especificado'}</div>
+      </div>
+    </div>
+
+    <div class="detalle-seccion">
+      <h4>Descripción</h4>
+      <p>${v.descripcion || ''}</p>
+    </div>
+
+    <div class="detalle-seccion">
+      <h4>Cuidados</h4>
+      <p>${v.cuidados || ''}</p>
+    </div>
+
+    ${v.curiosidad ? `
+    <div class="detalle-seccion">
+      <h4>¿Sabías que...?</h4>
+      <p style="font-style:italic; color:var(--verde-medio)">${v.curiosidad}</p>
+    </div>` : ''}`;
 }
 
 function agregarDesdeDetalle(plantaId) {
