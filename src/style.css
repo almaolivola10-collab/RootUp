@@ -257,6 +257,11 @@ html, body {
   font-size: 12px; font-weight: 400; cursor: pointer;
   transition: all 0.2s; white-space: nowrap;
 }
+.filtro-btn:hover {
+  background: var(--verde-oscuro);
+  color: white;
+  border-color: var(--verde-oscuro);
+}
 .filtro-btn.activo {
   background: var(--verde-oscuro); color: white; border-color: var(--verde-oscuro);
 }
