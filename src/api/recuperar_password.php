@@ -61,14 +61,13 @@ if ($accion === 'solicitar') {
             <p>— El equipo de RootUp</p>
         </div>";
 
-    $enviado = enviarEmail($email, $usuario['nombre'], $asunto, $cuerpo);
-
-    if ($enviado) {
-        echo json_encode(["exito" => true, "mensaje" => "Te enviamos un email con las instrucciones"]);
-    } else {
-        echo json_encode(["exito" => false, "mensaje" => "Error al enviar el email"]);
-    }
-}
+   // Devolver los datos para que EmailJS mande el email desde el frontend
+echo json_encode([
+    "exito"  => true,
+    "nombre" => $usuario['nombre'],
+    "token"  => $token,
+    "email"  => $email
+]);
 
 // ── PASO 2: Verificar token ──────────────────────────
 if ($accion === 'verificar') {
