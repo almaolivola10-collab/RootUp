@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restablecer contraseña — RootUp</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div style="max-width:420px; margin:0 auto; padding:2rem 1.25rem;">
+
+    <div style="text-align:center; margin-bottom:2rem;">
+      <div style="font-size:48px;">🌿</div>
+      <h1 style="font-family:'Playfair Display',serif; color:var(--verde-oscuro); margin-top:8px;">RootUp</h1>
+    </div>
+
+    <div id="estado-verificando" style="text-align:center; color:var(--texto-suave);">
+      Verificando link...
+    </div>
+
+    <div id="estado-invalido" class="hidden" style="text-align:center;">
+      <div style="font-size:40px; margin-bottom:1rem;">❌</div>
+      <p style="color:var(--rojo); font-size:15px;">El link expiró o ya fue usado.</p>
+      <a href="index.html" style="color:var(--verde-medio); font-size:14px;">Volver al inicio</a>
+    </div>
+
+    <div id="estado-formulario" class="hidden">
+      <h2 style="font-family:'Playfair Display',serif; color:var(--verde-oscuro); margin-bottom:1.5rem;">
+        Nueva contraseña
+      </h2>
+
+      <label class="form-label">Nueva contraseña</label>
+      <input type="password" id="nueva-password" class="form-input" placeholder="Mínimo 6 caracteres..." />
+
+      <label class="form-label" style="margin-top:1rem;">Repetir contraseña</label>
+      <input type="password" id="repetir-password" class="form-input" placeholder="Repetí la contraseña..." />
+
+      <button class="btn-accion full" onclick="cambiarPassword()" style="margin-top:1.5rem;">
+        Guardar nueva contraseña
+      </button>
+
+      <div id="reset-error" style="color:var(--rojo); font-size:13px; text-align:center; margin-top:8px;"></div>
+      <div id="reset-exito" style="color:var(--verde-medio); font-size:13px; text-align:center; margin-top:8px;"></div>
+    </div>
+
+  </div>
+
+  <script>
+    const API   = './api';
+    const token = new URLSearchParams(window.location.search).get('token');
+
+    // Verificar el token al cargar la página
+    async function verificarToken() {
+      if (!token) {
+        mostrarEstado('invalido');
+        return;
+      }
+
+      try {
+        const r = await fetch(`${API}/recuperar_password.php`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ accion: 'verificar', token })
+        });
+        const d = await r.json();
+
+        if (d.exito) {
+          mostrarEstado('formulario');
+        } else {
+          mostrarEstado('invalido');
+        }
+      } catch (e) {
+        mostrarEstado('invalido');
+      }
+    }
+
+    async function cambiarPassword() {
+      const nuevaPassword   = document.getElementById('nueva-password').value;
+      const repetirPassword = document.getElementById('repetir-password').value;
+      const errorDiv        = document.getElementById('reset-error');
+      const exitoDiv        = document.getElementById('reset-exito');
+
+      if (!nuevaPassword || !repetirPassword) {
+        errorDiv.textContent = 'Completá los dos campos';
+        return;
+      }
+
+      if (nuevaPassword.length < 6) {
+        errorDiv.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        return;
+      }
+
+      if (nuevaPassword !== repetirPassword) {
+        errorDiv.textContent = 'Las contraseñas no coinciden';
+        return;
+      }
+
+      errorDiv.textContent = '';
+      exitoDiv.textContent = 'Guardando...';
+
+      try {
+        const r = await fetch(`${API}/recuperar_password.php`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ accion: 'cambiar', token, password: nuevaPassword })
+        });
+        const d = await r.json();
+
+        if (d.exito) {
+          exitoDiv.textContent = '¡Contraseña actualizada! Redirigiendo...';
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 2000);
+        } else {
+          errorDiv.textContent  = d.mensaje;
+          exitoDiv.textContent  = '';
+        }
+      } catch (e) {
+        errorDiv.textContent = 'Error de conexión';
+        exitoDiv.textContent = '';
+      }
+    }
+
+    function mostrarEstado(estado) {
+      document.getElementById('estado-verificando').classList.add('hidden');
+      document.getElementById('estado-invalido').classList.add('hidden');
+      document.getElementById('estado-formulario').classList.add('hidden');
+      document.getElementById('estado-' + estado).classList.remove('hidden');
+    }
+
+    // Arrancar verificación al cargar
+    verificarToken();
+  </script>
+
+</body>
+</html>
