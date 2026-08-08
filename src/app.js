@@ -331,13 +331,18 @@ async function solicitarRecuperacion() {
     });
     const d = await r.json();
 
-    if (d.exito) {
-      exitoDiv.textContent = '✅ ' + d.mensaje;
-      errorDiv.textContent = '';
-    } else {
-      errorDiv.textContent = d.mensaje;
-      exitoDiv.textContent = '';
-    }
+if (d.exito) {
+  const link = `https://rootup.infinityfreeapp.com/src/reset.html?token=${d.token}`;
+
+  await emailjs.send('service_1qqksvq', 'template_oufb4rx', {
+    nombre:             d.nombre,
+    email_usuario:      d.email,
+    link_recuperacion:  link
+  });
+
+  exitoDiv.textContent = '✅ Te enviamos un email con las instrucciones';
+  errorDiv.textContent = '';
+}
   } catch (e) {
     errorDiv.textContent = 'Error de conexión';
     exitoDiv.textContent = '';
