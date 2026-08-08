@@ -309,6 +309,40 @@ if (!formatoEmail.test(email)) {
   }
 }
 
+async function solicitarRecuperacion() {
+  const email    = document.getElementById('recuperar-email').value.trim();
+  const errorDiv = document.getElementById('recuperar-error');
+  const exitoDiv = document.getElementById('recuperar-exito');
+
+  if (!email) {
+    errorDiv.textContent = 'Ingresá tu email';
+    exitoDiv.textContent = '';
+    return;
+  }
+
+  errorDiv.textContent = '';
+  exitoDiv.textContent = 'Enviando...';
+
+  try {
+    const r = await fetch(`${API}/recuperar_password.php`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ accion: 'solicitar', email })
+    });
+    const d = await r.json();
+
+    if (d.exito) {
+      exitoDiv.textContent = '✅ ' + d.mensaje;
+      errorDiv.textContent = '';
+    } else {
+      errorDiv.textContent = d.mensaje;
+      exitoDiv.textContent = '';
+    }
+  } catch (e) {
+    errorDiv.textContent = 'Error de conexión';
+    exitoDiv.textContent = '';
+  }
+}
 // ══════════════════════════════════════════════════════
 //  CERRAR SESIÓN
 // ══════════════════════════════════════════════════════
