@@ -43,34 +43,46 @@ RootUp/
 │   │    └── boceto.jpg
 │   └── informe.pdf       ← Informe APA v7
 │
-├── img/                  ← Imágenes del proyecto
+├── img/                ← Imágenes del proyecto
+│   ├── buscador app.png
+│   ├── favoritas app.png
+│   ├── inicio app.png
+│   ├── login app.png
+│   ├── plantas app.png
+│   ├── riegos app.png
+│   ├── rootup.jpg
 ├── src/                  ← Código de la app
-│   ├── api/  
+│   ├── api/ 
+│   │    ├── actualizar_hemisferio.php
 │   │    ├── conexion.php
 │   │    ├── favoritos.php
 │   │    ├── login.php
 │   │    ├── mis_plantas.php
+│   │    ├── plantas.php
+│   │    ├── recuperar_password.php
 │   │    ├── registro.php
-│   │    └── riegos.php
-│   ├── index.html        ← Estructura principal (pantallas y modales)
-│   ├── style.css         ← Estilos visuales de toda la app
+│   │    ├── riegos.php
+│   │    ├── variedades.php
 │   ├── app.js            ← Lógica: navegación, filtros, riego, favoritas
-│   └── datos.js          ← Base de datos de plantas
+│   ├── index.html        ← Estructura principal (pantallas y modales)
+│   ├── reset.html        ← Estructura para recuperar la contraseña
+│   └── style.css         ← Estilos visuales de toda la app
 │
 ├── index.php
 ├── README.md             ← Este archivo
 └── rootup.sql            ← Base de datos de la app
+  
 </pre>
 -------------------------------------------------------------
 
 Pantallas de la app
-
+<pre>
 Inicio | Saludo, estadísticas rápidas y plantas destacadas
 Buscar| Búsqueda por nombre y por categoría
 Favoritas | Lista de plantas marcadas como favoritas
 Mis plantas | Plantas propias del usuario
 Alertas | Recordatorios de riego con barra de urgencia
-
+</pre>
 -------------------------------------------------------------
 
 Links del proyecto
