@@ -74,41 +74,29 @@ Alertas | Recordatorios de riego con barra de urgencia
 -------------------------------------------------------------
 
 Links del proyecto
-
+<pre>
 Prototipo con I.A.: [rootup.base44.app](https://rootup.base44.app)
 App actual: (https://rootup.infinityfreeapp.com/src/index.html)
 Repositorio GitHub: (https://github.com/almaaluzz05/Proyecto-Agro)
-
+</pre>
 -------------------------------------------------------------
 
 Estado del proyecto
 
-Inicio del primer cuatrimestre — Mayo 2026
-
-[x] Base de datos de plantas
-[x] Búsqueda y filtros por categoría
-[x] Sistema de favoritas
-[x] Seguimiento de plantas propias
-[x] Alertas de riego con historial
-[ ] Login con cuenta propia (segundo cuatrimestre)
-[ ] Conexión con SmartPlant (segundo cuatrimestre)
-[ ] Base de datos en la nube (segundo cuatrimestre)
-[ ] App publicada (segundo cuatrimestre)
-
--------------------------------------------------------------
-Estado del proyecto
-
-Final del primer cuatrimestre — Julio 2026
-
-[x] Base de datos de plantas
-[x] Búsqueda y filtros por categoría
-[x] Sistema de favoritas
-[x] Seguimiento de plantas propias
-[x] Alertas de riego con historial
-[x] Login con cuenta propia (segundo cuatrimestre)
-[ ] Conexión con SmartPlant (segundo cuatrimestre)
-[x] Base de datos en la nube
-[x] App publicada (mediante InfinityFree)
+Estado anual de RootUp 2026
+<pre>
+[x] Base de datos de plantas (Marzo/Abril)
+[x] Búsqueda y filtros por categoría (Mayo)
+[x] Sistema de favoritas (Mayo)
+[x] Seguimiento de plantas propias (Mayo)
+[x] Alertas de riego (Junio)
+[x] Login con cuenta propia (Julio)
+[x] App publicada (Julio)
+[x] Base de datos en la nube (Agosto)
+[ ] Panel del administrador (Octubre/Noviembre)
+[ ] Notificaciones (Octubre/Noviembre)
+[ ] Conexión con SmartPlant (Octubre/Noviembre)
+</pre>
 
 -------------------------------------------------------------
 
