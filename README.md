@@ -34,7 +34,8 @@ Este proyecto forma parte del Proyecto Integrador Anual, que también incluye Sm
 -------------------------------------------------------------
 
 Estructura de carpetas
-
+<pre>
+  
 RootUp/
 ├── docs/                 ← Documentación del proyecto
 │   ├── wireframes/       ← Bocetos de las pantallas
@@ -59,7 +60,7 @@ RootUp/
 ├── index.php
 ├── README.md             ← Este archivo
 └── rootup.sql            ← Base de datos de la app
-
+</pre>
 -------------------------------------------------------------
 
 Pantallas de la app
