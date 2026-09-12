@@ -11,9 +11,12 @@
 
   <!-- Botón flotante: solo visible para admins -->
   <button id="btn-admin-fab" class="btn-admin-fab hidden" onclick="abrirModalAdmin()" title="Agregar planta">＋</button>
+
+  <!-- Avatar flotante: lleva al perfil, visible para cualquier usuario logueado -->
+  <button id="btn-perfil-fab" class="btn-perfil-fab hidden" onclick="irA('perfil')" title="Mi perfil"></button>
+
   <!-- ═══════════════════════════════
        MODAL: SELECCIÓN DE HEMISFERIO
-       Aparece una sola vez al registrarse
   ═══════════════════════════════ -->
   <div id="modal-hemisferio" class="modal-overlay hidden" onclick="event.stopPropagation()">
     <div class="modal-card" onclick="event.stopPropagation()">
@@ -160,10 +163,6 @@
         <h1 class="hero-titulo">RootUp</h1>
         <p class="hero-sub" id="saludo-nombre">Tu guía inteligente de plantas</p>
       </div>
-      <!-- Botón cerrar sesión -->
-      <button onclick="cerrarSesion()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 12px;border-radius:99px;font-size:12px;cursor:pointer;">
-        Salir
-      </button>
     </div>
 
     <div class="seccion-padding">
@@ -258,6 +257,39 @@
   </div>
 
   <!-- ═══════════════════════════════
+       PANTALLA: MI PERFIL
+  ═══════════════════════════════ -->
+  <div id="pantalla-perfil" class="pantalla">
+    <div class="topbar-simple">
+      <h2>Mi perfil</h2>
+    </div>
+    <div class="seccion-padding">
+
+      <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:1.5rem;">
+        <div id="perfil-avatar-grande" style="width:80px;height:80px;border-radius:50%;background:var(--verde-medio);color:white;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:600;font-family:'Playfair Display',serif;margin-bottom:0.75rem;"></div>
+        <div style="font-size:18px;font-weight:600;color:var(--verde-oscuro);" id="perfil-nombre"></div>
+        <div style="font-size:13px;color:var(--texto-suave);" id="perfil-email"></div>
+        <div style="font-size:12px;color:var(--texto-suave);margin-top:4px;" id="perfil-desde"></div>
+        <p style="font-size:11px;color:var(--texto-suave);margin-top:6px;">📷 Foto de perfil: próximamente</p>
+      </div>
+
+      <div class="seccion-titulo">Hemisferio</div>
+      <div class="filtros-row">
+        <button class="filtro-btn" id="perfil-btn-sur" onclick="cambiarHemisferioPerfil('sur')">🇦🇷 Sur</button>
+        <button class="filtro-btn" id="perfil-btn-norte" onclick="cambiarHemisferioPerfil('norte')">🇺🇸 Norte</button>
+      </div>
+
+      <div class="seccion-titulo" style="margin-top:1.5rem">Tus números</div>
+      <div class="stats-row" id="perfil-stats"></div>
+
+      <div class="seccion-titulo" style="margin-top:1.5rem">Logros</div>
+      <div id="perfil-logros" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;"></div>
+
+      <button class="btn-accion full" style="margin-top:2rem;background:var(--tierra);" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
        MODAL: DETALLE DE PLANTA
   ═══════════════════════════════ -->
   <div id="modal-planta" class="modal-overlay hidden" onclick="cerrarModal('modal-planta')">
@@ -306,7 +338,7 @@
       <button class="btn-accion full" onclick="confirmarRiego()">✓ Confirmar riego</button>
     </div>
   </div>
-  
+
   <!-- ═══════════════════════════════
        MODAL: ADMIN — AGREGAR PLANTA AL CATÁLOGO
   ═══════════════════════════════ -->
@@ -382,11 +414,10 @@
       <button class="btn-accion full" onclick="guardarPlantaAdmin()">Guardar planta</button>
     </div>
   </div>
+
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
  <script src="app.js?v=2"></script>
 </body>
 </html>
-
-

@@ -193,6 +193,7 @@ async function irA(id) {
   if (id === 'favoritas')     renderFavoritas();
   if (id === 'mis-plantas')   await renderMisPlantas();
   if (id === 'recordatorios') await renderRecordatorios();
+  if (id === 'perfil')        await renderPerfil();
 
   window.scrollTo(0, 0);
 }
@@ -226,6 +227,7 @@ async function iniciarSesion() {
       usuarioActual = datos.usuario;
       guardarUsuario(datos.usuario);
       actualizarUIAdmin();
+      actualizarUIPerfil();
       errorDiv.textContent = '';
 
       // Cargar datos desde MySQL antes de mostrar la app
@@ -359,6 +361,7 @@ function cerrarSesion() {
   misPlantasCache = [];
   localStorage.removeItem('ru-usuario');
   actualizarUIAdmin();
+  actualizarUIPerfil();
   irA('login');
 }
 
@@ -371,6 +374,18 @@ function actualizarUIAdmin() {
   const btn = document.getElementById('btn-admin-fab');
   if (!btn) return;
   if (usuarioActual && usuarioActual.es_admin) {
+    btn.classList.remove('hidden');
+  } else {
+    btn.classList.add('hidden');
+  }
+}
+
+// Muestra/oculta el avatar de perfil y le pone la inicial del nombre
+function actualizarUIPerfil() {
+  const btn = document.getElementById('btn-perfil-fab');
+  if (!btn) return;
+  if (usuarioActual && usuarioActual.nombre) {
+    btn.textContent = usuarioActual.nombre.trim().charAt(0).toUpperCase();
     btn.classList.remove('hidden');
   } else {
     btn.classList.add('hidden');
@@ -454,6 +469,92 @@ async function guardarPlantaAdmin() {
     estadoDiv.style.color = 'var(--rojo)';
     estadoDiv.textContent = '❌ Error de conexión.';
     console.error(e);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  PANTALLA: MI PERFIL
+// ══════════════════════════════════════════════════════
+
+async function renderPerfil() {
+  if (!usuarioActual) return;
+
+  try {
+    const r = await fetch(`${API}/perfil.php?usuario_id=${usuarioActual.id}`);
+    const d = await r.json();
+
+    if (!d.exito) {
+      console.error(d.mensaje);
+      return;
+    }
+
+    const inicial = d.usuario.nombre.trim().charAt(0).toUpperCase();
+    document.getElementById('perfil-avatar-grande').textContent = inicial;
+    document.getElementById('perfil-nombre').textContent = d.usuario.nombre;
+    document.getElementById('perfil-email').textContent = d.usuario.email;
+
+    // "Miembro desde junio de 2026"
+    const fecha = new Date(d.usuario.fecha_registro.replace(' ', 'T'));
+    const texto = fecha.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+    document.getElementById('perfil-desde').textContent = 'Miembro desde ' + texto;
+
+    // Resaltar el hemisferio activo (usa la variable global `hemisferio`)
+    document.getElementById('perfil-btn-sur').classList.toggle('activo', hemisferio === 'sur');
+    document.getElementById('perfil-btn-norte').classList.toggle('activo', hemisferio === 'norte');
+
+    // Estadísticas
+    const s = d.stats;
+    document.getElementById('perfil-stats').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-num">${s.total_plantas}</div>
+        <div class="stat-label">Plantas propias</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${s.total_favoritas}</div>
+        <div class="stat-label">Favoritas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${s.total_riegos}</div>
+        <div class="stat-label">Riegos registrados</div>
+      </div>`;
+
+    // Logros (se calculan acá mismo, en base a las estadísticas)
+    const logros = [
+      { emoji: '🌱', nombre: 'Primera planta',    lograda: s.total_plantas >= 1 },
+      { emoji: '💧', nombre: 'Regador constante', lograda: s.total_riegos >= 10 },
+      { emoji: '🌵', nombre: 'Coleccionista',      lograda: s.total_plantas >= 5 },
+      { emoji: '🌍', nombre: 'Jardín diverso',     lograda: s.categorias_distintas >= 3 },
+    ];
+
+    document.getElementById('perfil-logros').innerHTML = logros.map(l => `
+      <div style="text-align:center; padding:0.8rem 0.4rem; border-radius:10px;
+                  background:${l.lograda ? 'var(--verde-palido)' : '#eee'};
+                  opacity:${l.lograda ? '1' : '0.5'};">
+        <div style="font-size:26px;">${l.emoji}</div>
+        <div style="font-size:12px; margin-top:4px; color:var(--texto-medio);">${l.nombre}</div>
+      </div>`).join('');
+
+  } catch (e) {
+    console.error('Error cargando perfil:', e);
+  }
+}
+
+// Cambia el hemisferio desde la pantalla de perfil (sin navegar a otra pantalla)
+async function cambiarHemisferioPerfil(opcion) {
+  hemisferio = opcion;
+  localStorage.setItem('ru-hemisferio', opcion);
+
+  document.getElementById('perfil-btn-sur').classList.toggle('activo', opcion === 'sur');
+  document.getElementById('perfil-btn-norte').classList.toggle('activo', opcion === 'norte');
+
+  try {
+    await fetch(`${API}/actualizar_hemisferio.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario_id: usuarioActual.id, hemisferio: opcion })
+    });
+  } catch (e) {
+    console.error('Error actualizando hemisferio:', e);
   }
 }
 
@@ -1048,6 +1149,7 @@ emailjs.init('gR1az2PRfTIZYX3BC');
 cargarHemisferio();
 usuarioActual = cargarUsuario();
 actualizarUIAdmin();
+actualizarUIPerfil();
 
 // Primero cargar las plantas desde MySQL, después iniciar la app
 cargarPlantas().then(() => {
