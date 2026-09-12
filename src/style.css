@@ -214,44 +214,41 @@ html, body {
    BOTÓN ADMIN 
 ══════════════════════════════════ */
 .btn-admin-fab {
-  position: fixed;
-  top: 70px;
-  right: 16px;
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  background: var(--verde-oscuro);
-  color: white;
-  border: none;
-  font-size: 22px;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  cursor: pointer;
-  z-index: 200;
-  transition: transform 0.15s;
-}
-.btn-admin-fab:hover { transform: scale(1.08); background: var(--verde-medio); }
-
-/* ══════════════════════════════════
-   AVATAR PERFIL (flotante, esquina sup. izquierda)
-══════════════════════════════════ */
-.btn-perfil-fab {
-  position: fixed;
-  top: 70px;
-  left: 16px;
+  position: absolute;
+  top: 4.5rem;
+  right: 1rem;
   width: 42px; height: 42px;
   border-radius: 50%;
-  background: var(--verde-medio);
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.2s;
+}
+.btn-admin-fab:hover { transform: scale(1.08); background: rgba(255,255,255,0.3); }
+
+/* ══════════════════════════════════
+   AVATAR PERFIL 
+══════════════════════════════════ */
+.btn-perfil-fab {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
   color: white;
   border: 2px solid rgba(255,255,255,0.6);
   font-size: 17px;
   font-weight: 600;
   font-family: 'Playfair Display', serif;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   cursor: pointer;
-  z-index: 200;
   transition: transform 0.15s;
 }
+.btn-perfil-fab:hover { transform: scale(1.08); }
 
 .btn-perfil-fab:hover { transform: scale(1.08); }
 /* ══════════════════════════════════

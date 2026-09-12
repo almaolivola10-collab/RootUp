@@ -9,14 +9,9 @@
 </head>
 <body>
 
-  <!-- Botón flotante: solo visible para admins -->
-  <button id="btn-admin-fab" class="btn-admin-fab hidden" onclick="abrirModalAdmin()" title="Agregar planta">＋</button>
-
-  <!-- Avatar flotante: lleva al perfil, visible para cualquier usuario logueado -->
-  <button id="btn-perfil-fab" class="btn-perfil-fab hidden" onclick="irA('perfil')" title="Mi perfil"></button>
-
   <!-- ═══════════════════════════════
        MODAL: SELECCIÓN DE HEMISFERIO
+       Aparece una sola vez al registrarse
   ═══════════════════════════════ -->
   <div id="modal-hemisferio" class="modal-overlay hidden" onclick="event.stopPropagation()">
     <div class="modal-card" onclick="event.stopPropagation()">
@@ -163,6 +158,10 @@
         <h1 class="hero-titulo">RootUp</h1>
         <p class="hero-sub" id="saludo-nombre">Tu guía inteligente de plantas</p>
       </div>
+
+      <!-- Avatar de perfil: siempre visible logueado. Botón admin: solo admins, debajo del avatar -->
+      <button id="btn-perfil-fab" class="btn-perfil-fab hidden" onclick="irA('perfil')" title="Mi perfil"></button>
+      <button id="btn-admin-fab" class="btn-admin-fab hidden" onclick="abrirModalAdmin()" title="Agregar planta">＋</button>
     </div>
 
     <div class="seccion-padding">
@@ -281,9 +280,6 @@
 
       <div class="seccion-titulo" style="margin-top:1.5rem">Tus números</div>
       <div class="stats-row" id="perfil-stats"></div>
-
-      <div class="seccion-titulo" style="margin-top:1.5rem">Logros</div>
-      <div id="perfil-logros" style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;"></div>
 
       <button class="btn-accion full" style="margin-top:2rem;background:var(--tierra);" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>

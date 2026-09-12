@@ -518,22 +518,6 @@ async function renderPerfil() {
         <div class="stat-label">Riegos registrados</div>
       </div>`;
 
-    // Logros (se calculan acá mismo, en base a las estadísticas)
-    const logros = [
-      { emoji: '🌱', nombre: 'Primera planta',    lograda: s.total_plantas >= 1 },
-      { emoji: '💧', nombre: 'Regador constante', lograda: s.total_riegos >= 10 },
-      { emoji: '🌵', nombre: 'Coleccionista',      lograda: s.total_plantas >= 5 },
-      { emoji: '🌍', nombre: 'Jardín diverso',     lograda: s.categorias_distintas >= 3 },
-    ];
-
-    document.getElementById('perfil-logros').innerHTML = logros.map(l => `
-      <div style="text-align:center; padding:0.8rem 0.4rem; border-radius:10px;
-                  background:${l.lograda ? 'var(--verde-palido)' : '#eee'};
-                  opacity:${l.lograda ? '1' : '0.5'};">
-        <div style="font-size:26px;">${l.emoji}</div>
-        <div style="font-size:12px; margin-top:4px; color:var(--texto-medio);">${l.nombre}</div>
-      </div>`).join('');
-
   } catch (e) {
     console.error('Error cargando perfil:', e);
   }
