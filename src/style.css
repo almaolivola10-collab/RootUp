@@ -225,6 +225,7 @@ html, body {
   font-size: 20px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
+  z-index: 2;
   transition: transform 0.15s, background 0.2s;
 }
 .btn-admin-fab:hover { transform: scale(1.08); background: rgba(255,255,255,0.3); }
@@ -246,6 +247,7 @@ html, body {
   font-family: 'Playfair Display', serif;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
+  z-index: 2;
   transition: transform 0.15s;
 }
 .btn-perfil-fab:hover { transform: scale(1.08); }
