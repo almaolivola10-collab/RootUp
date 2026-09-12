@@ -59,6 +59,27 @@ async function elegirHemisferio(opcion) {
 function cargarHemisferio() {
   hemisferio = localStorage.getItem('ru-hemisferio') || 'sur';
 }
+
+// ══════════════════════════════════════════════════════
+//  TEMA (claro / oscuro)
+// ══════════════════════════════════════════════════════
+
+function aplicarTema(tema) {
+  document.documentElement.setAttribute('data-tema', tema);
+  localStorage.setItem('ru-tema', tema);
+}
+
+function cargarTema() {
+  aplicarTema(localStorage.getItem('ru-tema') || 'claro');
+}
+
+// Se llama desde los botones de la pantalla de perfil
+function cambiarTema(opcion) {
+  aplicarTema(opcion);
+  document.getElementById('perfil-btn-claro').classList.toggle('activo', opcion === 'claro');
+  document.getElementById('perfil-btn-oscuro').classList.toggle('activo', opcion === 'oscuro');
+}
+
 async function cargarPlantas() {
   try {
     const r = await fetch(`${API}/plantas.php`);
@@ -501,6 +522,11 @@ async function renderPerfil() {
     // Resaltar el hemisferio activo (usa la variable global `hemisferio`)
     document.getElementById('perfil-btn-sur').classList.toggle('activo', hemisferio === 'sur');
     document.getElementById('perfil-btn-norte').classList.toggle('activo', hemisferio === 'norte');
+
+    // Resaltar el tema activo
+    const temaActual = localStorage.getItem('ru-tema') || 'claro';
+    document.getElementById('perfil-btn-claro').classList.toggle('activo', temaActual === 'claro');
+    document.getElementById('perfil-btn-oscuro').classList.toggle('activo', temaActual === 'oscuro');
 
     // Estadísticas
     const s = d.stats;
@@ -1131,6 +1157,7 @@ function cerrarModal(id) {
 // ══════════════════════════════════════════════════════
 emailjs.init('gR1az2PRfTIZYX3BC');
 cargarHemisferio();
+cargarTema();
 usuarioActual = cargarUsuario();
 actualizarUIAdmin();
 actualizarUIPerfil();

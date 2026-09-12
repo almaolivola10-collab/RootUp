@@ -28,6 +28,24 @@
   --sombra-md: 0 4px 20px rgba(0,0,0,0.10);
 }
 
+/* ══════════════════════════════════
+   MODO OSCURO
+══════════════════════════════════ */
+html[data-tema="oscuro"] {
+  --texto:         #eef2ee;
+  --texto-medio:   #cdd6d0;
+  --texto-suave:   #93a199;
+  --borde:         #2a3730;
+  --fondo:         #101a15;
+  --blanco:        #182620;
+
+  --verde-palido:  #22392c;
+  --verde-ultra:   #182620;
+  --tierra-pale:   #3a2c1f;
+  --amarillo-pale: #3a3419;
+  --rojo-pale:     #3a1e20;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
@@ -211,7 +229,7 @@ html, body {
 .btn-topbar-add:hover { background: var(--verde-oscuro); }
 
 /* ══════════════════════════════════
-   BOTÓN ADMIN 
+   BOTÓN ADMIN (flotante, esquina sup. derecha)
 ══════════════════════════════════ */
 .btn-admin-fab {
   position: absolute;
@@ -231,7 +249,7 @@ html, body {
 .btn-admin-fab:hover { transform: scale(1.08); background: rgba(255,255,255,0.3); }
 
 /* ══════════════════════════════════
-   AVATAR PERFIL 
+   AVATAR PERFIL (dentro de la hero de inicio, esquina sup. derecha)
 ══════════════════════════════════ */
 .btn-perfil-fab {
   position: absolute;
@@ -252,7 +270,6 @@ html, body {
 }
 .btn-perfil-fab:hover { transform: scale(1.08); }
 
-.btn-perfil-fab:hover { transform: scale(1.08); }
 /* ══════════════════════════════════
    BUSCADOR
 ══════════════════════════════════ */
