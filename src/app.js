@@ -225,6 +225,7 @@ async function iniciarSesion() {
     if (datos.exito) {
       usuarioActual = datos.usuario;
       guardarUsuario(datos.usuario);
+      actualizarUIAdmin();
       errorDiv.textContent = '';
 
       // Cargar datos desde MySQL antes de mostrar la app
@@ -357,7 +358,103 @@ function cerrarSesion() {
   favoritosCache  = [];
   misPlantasCache = [];
   localStorage.removeItem('ru-usuario');
+  actualizarUIAdmin();
   irA('login');
+}
+
+// ══════════════════════════════════════════════════════
+//  PANEL ADMIN — agregar plantas al catálogo
+// ══════════════════════════════════════════════════════
+
+// Muestra u oculta el botón flotante según si el usuario logueado es admin
+function actualizarUIAdmin() {
+  const btn = document.getElementById('btn-admin-fab');
+  if (!btn) return;
+  if (usuarioActual && usuarioActual.es_admin) {
+    btn.classList.remove('hidden');
+  } else {
+    btn.classList.add('hidden');
+  }
+}
+
+function abrirModalAdmin() {
+  document.getElementById('modal-admin-agregar').classList.remove('hidden');
+}
+
+async function guardarPlantaAdmin() {
+  const nombre = document.getElementById('adm-nombre').value.trim();
+
+  const categorias = Array.from(
+    document.querySelectorAll('#adm-categorias input[type=checkbox]:checked')
+  ).map(c => c.value);
+
+  const estadoDiv = document.getElementById('adm-estado');
+
+  if (!nombre || categorias.length === 0) {
+    estadoDiv.style.color = 'var(--rojo)';
+    estadoDiv.textContent = 'Nombre y al menos una categoría son obligatorios.';
+    return;
+  }
+
+  const body = {
+    usuario_id:           usuarioActual.id,
+    nombre:                nombre,
+    cientifico:            document.getElementById('adm-cientifico').value.trim(),
+    emoji:                 document.getElementById('adm-emoji').value.trim() || '🌱',
+    categoria:             categorias.join(','),
+    tags:                  document.getElementById('adm-tags').value.trim() || null,
+    dias_riego:            document.getElementById('adm-diasriego').value,
+    luz:                   document.getElementById('adm-luz').value.trim(),
+    meses_siembra_sur:     document.getElementById('adm-mesessur').value.trim(),
+    meses_siembra_norte:   document.getElementById('adm-mesesnorte').value.trim(),
+    dificultad:            document.getElementById('adm-dificultad').value,
+    descripcion:           document.getElementById('adm-descripcion').value.trim(),
+    cuidados:              document.getElementById('adm-cuidados').value.trim(),
+    curiosidad:            document.getElementById('adm-curiosidad').value.trim() || null,
+    advertencia:           document.getElementById('adm-advertencia').value.trim() || null,
+    imagen:                document.getElementById('adm-imagen').value.trim(),
+    destacada:             document.getElementById('adm-destacada').checked ? 1 : 0,
+  };
+
+  estadoDiv.style.color = 'var(--verde-medio)';
+  estadoDiv.textContent = 'Guardando...';
+
+  try {
+    const respuesta = await fetch(`${API}/agregar_planta.php`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body)
+    });
+    const datos = await respuesta.json();
+
+    if (datos.exito) {
+      estadoDiv.style.color = 'var(--verde-medio)';
+      estadoDiv.textContent = '✅ Planta agregada.';
+
+      // Recargar el catálogo desde MySQL para que aparezca ya mismo
+      await cargarPlantas();
+      renderBuscar(document.getElementById('input-buscar')?.value || '');
+
+      setTimeout(() => {
+        cerrarModal('modal-admin-agregar');
+        document.getElementById('adm-estado').textContent = '';
+        document.querySelectorAll('#adm-categorias input[type=checkbox]').forEach(c => c.checked = false);
+        ['adm-nombre','adm-cientifico','adm-tags','adm-diasriego','adm-luz','adm-mesessur',
+         'adm-mesesnorte','adm-descripcion','adm-cuidados','adm-curiosidad','adm-advertencia','adm-imagen']
+         .forEach(id => document.getElementById(id).value = '');
+        document.getElementById('adm-destacada').checked = false;
+        document.getElementById('adm-emoji').value = '🌱';
+      }, 900);
+
+    } else {
+      estadoDiv.style.color = 'var(--rojo)';
+      estadoDiv.textContent = '❌ ' + datos.mensaje;
+    }
+  } catch (e) {
+    estadoDiv.style.color = 'var(--rojo)';
+    estadoDiv.textContent = '❌ Error de conexión.';
+    console.error(e);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -950,6 +1047,7 @@ function cerrarModal(id) {
 emailjs.init('gR1az2PRfTIZYX3BC');
 cargarHemisferio();
 usuarioActual = cargarUsuario();
+actualizarUIAdmin();
 
 // Primero cargar las plantas desde MySQL, después iniciar la app
 cargarPlantas().then(() => {

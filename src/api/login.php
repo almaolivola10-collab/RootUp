@@ -15,7 +15,7 @@ if (empty($email) || empty($password)) {
     exit();
 }
 
-$consulta = $conexion->prepare("SELECT id, nombre, email, password FROM usuarios WHERE email = ?");
+$consulta = $conexion->prepare("SELECT id, nombre, email, password, es_admin FROM usuarios WHERE email = ?");
 $consulta->bind_param("s", $email);
 $consulta->execute();
 $resultado = $consulta->get_result();
@@ -35,7 +35,12 @@ if (!password_verify($password, $usuario['password'])) {
 echo json_encode([
     "exito"   => true,
     "mensaje" => "Login exitoso",
-    "usuario" => ["id" => $usuario['id'], "nombre" => $usuario['nombre'], "email" => $usuario['email']]
+    "usuario" => [
+        "id"       => $usuario['id'],
+        "nombre"   => $usuario['nombre'],
+        "email"    => $usuario['email'],
+        "es_admin" => (bool) $usuario['es_admin']
+    ]
 ]);
 
 $conexion->close();
