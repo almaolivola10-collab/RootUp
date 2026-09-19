@@ -35,7 +35,7 @@
     <div class="inicio-hero">
       <div class="hero-deco"></div>
       <div class="hero-content">
-        <div style="font-size:56px; margin-bottom:1rem;">🌿</div>
+        <img src="../img/logo-rootup-blanco.png" alt="RootUp" class="logo-hero" style="height:56px; margin-bottom:1rem;" />
         <h1 class="hero-titulo">RootUp</h1>
         <p class="hero-sub">Tu guía inteligente de plantas</p>
       </div>
@@ -70,6 +70,9 @@
        PANTALLA: REGISTRO
   ═══════════════════════════════ -->
   <div id="pantalla-registro" class="pantalla">
+    <div style="text-align:center; padding:1.5rem 0 0.25rem; background:var(--verde-oscuro);">
+      <img src="../img/logo-rootup-blanco.png" alt="RootUp" class="logo-hero" style="height:44px; margin:0 auto;" />
+    </div>
     <div class="topbar-simple">
       <h2>Crear cuenta</h2>
     </div>
@@ -158,10 +161,10 @@
         <h1 class="hero-titulo">RootUp</h1>
         <p class="hero-sub" id="saludo-nombre">Tu guía inteligente de plantas</p>
       </div>
-      <!-- Botón cerrar sesión -->
-      <button onclick="cerrarSesion()" style="position:absolute;top:1rem;right:1rem;background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 12px;border-radius:99px;font-size:12px;cursor:pointer;">
-        Salir
-      </button>
+
+      <!-- Avatar de perfil: siempre visible logueado. Botón admin: solo admins, debajo del avatar -->
+      <button id="btn-perfil-fab" class="btn-perfil-fab hidden" onclick="irA('perfil')" title="Mi perfil"></button>
+      <button id="btn-admin-fab" class="btn-admin-fab hidden" onclick="abrirModalAdmin()" title="Agregar planta">＋</button>
     </div>
 
     <div class="seccion-padding">
@@ -256,6 +259,42 @@
   </div>
 
   <!-- ═══════════════════════════════
+       PANTALLA: MI PERFIL
+  ═══════════════════════════════ -->
+  <div id="pantalla-perfil" class="pantalla">
+    <div class="topbar-simple">
+      <h2>Mi perfil</h2>
+    </div>
+    <div class="seccion-padding">
+
+      <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:1.5rem;">
+        <div id="perfil-avatar-grande" style="width:80px;height:80px;border-radius:50%;background:var(--verde-medio);color:white;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:600;font-family:'Playfair Display',serif;margin-bottom:0.75rem;"></div>
+        <div style="font-size:18px;font-weight:600;color:var(--verde-oscuro);" id="perfil-nombre"></div>
+        <div style="font-size:13px;color:var(--texto-suave);" id="perfil-email"></div>
+        <div style="font-size:12px;color:var(--texto-suave);margin-top:4px;" id="perfil-desde"></div>
+        <p style="font-size:11px;color:var(--texto-suave);margin-top:6px;">📷 Foto de perfil: próximamente</p>
+      </div>
+
+      <div class="seccion-titulo">Hemisferio</div>
+      <div class="filtros-row">
+        <button class="filtro-btn" id="perfil-btn-sur" onclick="cambiarHemisferioPerfil('sur')">🇦🇷 Sur</button>
+        <button class="filtro-btn" id="perfil-btn-norte" onclick="cambiarHemisferioPerfil('norte')">🇺🇸 Norte</button>
+      </div>
+
+      <div class="seccion-titulo" style="margin-top:1.5rem">Apariencia</div>
+      <div class="filtros-row">
+        <button class="filtro-btn" id="perfil-btn-claro" onclick="cambiarTema('claro')">☀️ Claro</button>
+        <button class="filtro-btn" id="perfil-btn-oscuro" onclick="cambiarTema('oscuro')">🌙 Oscuro</button>
+      </div>
+
+      <div class="seccion-titulo" style="margin-top:1.5rem">Tus números</div>
+      <div class="stats-row" id="perfil-stats"></div>
+
+      <button class="btn-accion full" style="margin-top:2rem;background:var(--rojo);" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
        MODAL: DETALLE DE PLANTA
   ═══════════════════════════════ -->
   <div id="modal-planta" class="modal-overlay hidden" onclick="cerrarModal('modal-planta')">
@@ -305,11 +344,85 @@
     </div>
   </div>
 
+  <!-- ═══════════════════════════════
+       MODAL: ADMIN — AGREGAR PLANTA AL CATÁLOGO
+  ═══════════════════════════════ -->
+  <div id="modal-admin-agregar" class="modal-overlay hidden" onclick="cerrarModal('modal-admin-agregar')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-cerrar" onclick="cerrarModal('modal-admin-agregar')">✕</button>
+      <h3 class="modal-titulo">🌱 Agregar planta al catálogo</h3>
+
+      <label class="form-label">Nombre</label>
+      <input type="text" id="adm-nombre" class="form-input" placeholder="Ej: Potus" />
+
+      <label class="form-label">Nombre científico</label>
+      <input type="text" id="adm-cientifico" class="form-input" placeholder="Ej: Epipremnum aureum" />
+
+      <label class="form-label">Emoji</label>
+      <input type="text" id="adm-emoji" class="form-input" placeholder="🌿" value="🌱" maxlength="4" />
+
+      <label class="form-label">Categoría (elegí una o más)</label>
+      <div class="filtros-row" id="adm-categorias">
+        <label class="filtro-btn"><input type="checkbox" value="interior" style="margin-right:4px;">Interior</label>
+        <label class="filtro-btn"><input type="checkbox" value="huerta" style="margin-right:4px;">Huerta</label>
+        <label class="filtro-btn"><input type="checkbox" value="suculentas" style="margin-right:4px;">Suculentas</label>
+        <label class="filtro-btn"><input type="checkbox" value="flores" style="margin-right:4px;">Flores</label>
+        <label class="filtro-btn"><input type="checkbox" value="árboles" style="margin-right:4px;">Árboles</label>
+        <label class="filtro-btn"><input type="checkbox" value="cactus" style="margin-right:4px;">Cactus</label>
+        <label class="filtro-btn"><input type="checkbox" value="Aromáticas" style="margin-right:4px;">Aromáticas</label>
+        <label class="filtro-btn"><input type="checkbox" value="medicinal" style="margin-right:4px;">Medicinal</label>
+      </div>
+
+      <label class="form-label">Tags (separados por coma, opcional)</label>
+      <input type="text" id="adm-tags" class="form-input" placeholder="ej: purificadora, interior" />
+
+      <label class="form-label">Días entre riegos</label>
+      <input type="number" id="adm-diasriego" class="form-input" placeholder="Ej: 5" />
+
+      <label class="form-label">Luz</label>
+      <input type="text" id="adm-luz" class="form-input" placeholder="Ej: Sol indirecto" />
+
+      <label class="form-label">Meses de siembra (hemisferio sur)</label>
+      <input type="text" id="adm-mesessur" class="form-input" placeholder="Ej: Primavera" />
+
+      <label class="form-label">Meses de siembra (hemisferio norte)</label>
+      <input type="text" id="adm-mesesnorte" class="form-input" placeholder="Ej: Otoño" />
+
+      <label class="form-label">Dificultad</label>
+      <select id="adm-dificultad" class="form-select">
+        <option>Fácil</option>
+        <option>Media</option>
+        <option>Difícil</option>
+      </select>
+
+      <label class="form-label">Descripción</label>
+      <textarea id="adm-descripcion" class="form-textarea" rows="3"></textarea>
+
+      <label class="form-label">Cuidados</label>
+      <textarea id="adm-cuidados" class="form-textarea" rows="3"></textarea>
+
+      <label class="form-label">Curiosidad (opcional)</label>
+      <textarea id="adm-curiosidad" class="form-textarea" rows="2"></textarea>
+
+      <label class="form-label">Advertencia (opcional, ej: toxicidad)</label>
+      <input type="text" id="adm-advertencia" class="form-input" />
+
+      <label class="form-label">URL de imagen</label>
+      <input type="text" id="adm-imagen" class="form-input" placeholder="https://..." />
+
+      <label class="form-label" style="display:flex; align-items:center; gap:6px;">
+        <input type="checkbox" id="adm-destacada" style="width:auto;" /> Marcar como destacada
+      </label>
+
+      <div id="adm-estado" style="font-size:13px; margin:8px 0; color:var(--verde-medio);"></div>
+
+      <button class="btn-accion full" onclick="guardarPlantaAdmin()">Guardar planta</button>
+    </div>
+  </div>
+
  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
  <script src="app.js?v=2"></script>
 </body>
 </html>
-
-

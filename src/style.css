@@ -1,5 +1,6 @@
 :root {
   --verde-oscuro:  #1a3a2a;
+  --verde-texto:   var(--verde-oscuro);
   --verde-medio:   #2d6a4f;
   --verde-claro:   #52b788;
   --verde-palido:  #d8f3dc;
@@ -26,6 +27,25 @@
   --radio-lg:  22px;
   --sombra-sm: 0 2px 8px rgba(0,0,0,0.06);
   --sombra-md: 0 4px 20px rgba(0,0,0,0.10);
+}
+
+/* ══════════════════════════════════
+   MODO OSCURO
+══════════════════════════════════ */
+html[data-tema="oscuro"] {
+  --texto:         #eef2ee;
+  --texto-medio:   #cdd6d0;
+  --texto-suave:   #93a199;
+  --borde:         #2a3730;
+  --fondo:         #101a15;
+  --blanco:        #182620;
+  --verde-texto:   #8fd7ae;
+
+  --verde-palido:  #22392c;
+  --verde-ultra:   #182620;
+  --tierra-pale:   #3a2c1f;
+  --amarillo-pale: #3a3419;
+  --rojo-pale:     #3a1e20;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -120,6 +140,11 @@ html, body {
 
 .hero-content { position: relative; z-index: 1; }
 
+.logo-hero {
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.25));
+}
+
 .hero-saludo {
   font-size: 13px; font-weight: 300;
   color: rgba(255,255,255,0.6);
@@ -178,7 +203,7 @@ html, body {
 .seccion-titulo {
   font-family: 'Playfair Display', serif;
   font-size: 17px; font-weight: 500;
-  color: var(--verde-oscuro);
+  color: var(--verde-texto);
   margin-bottom: 0.75rem;
 }
 
@@ -195,7 +220,7 @@ html, body {
 .topbar-simple h2 {
   font-family: 'Playfair Display', serif;
   font-size: 22px; font-weight: 700;
-  color: var(--verde-oscuro);
+  color: var(--verde-texto);
 }
 
 .btn-topbar-add {
@@ -209,6 +234,48 @@ html, body {
   transition: background 0.2s;
 }
 .btn-topbar-add:hover { background: var(--verde-oscuro); }
+
+/* ══════════════════════════════════
+   BOTÓN ADMIN (flotante, esquina sup. derecha)
+══════════════════════════════════ */
+.btn-admin-fab {
+  position: absolute;
+  top: 4.5rem;
+  right: 1rem;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: none;
+  font-size: 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.15s, background 0.2s;
+}
+.btn-admin-fab:hover { transform: scale(1.08); background: rgba(255,255,255,0.3); }
+
+/* ══════════════════════════════════
+   AVATAR PERFIL (dentro de la hero de inicio, esquina sup. derecha)
+══════════════════════════════════ */
+.btn-perfil-fab {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  color: white;
+  border: 2px solid rgba(255,255,255,0.6);
+  font-size: 17px;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 2;
+  transition: transform 0.15s;
+}
+.btn-perfil-fab:hover { transform: scale(1.08); }
 
 /* ══════════════════════════════════
    BUSCADOR
@@ -300,7 +367,7 @@ html, body {
 .card-planta-nombre {
   font-family: 'Playfair Display', serif;
   font-size: 14px; font-weight: 500;
-  color: var(--verde-oscuro);
+  color: var(--verde-texto);
   margin-bottom: 3px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
@@ -317,7 +384,7 @@ html, body {
   font-size: 10px; padding: 2px 8px;
   border-radius: 99px; font-weight: 400;
 }
-.tag-verde  { background: var(--verde-palido); color: var(--verde-oscuro); }
+.tag-verde  { background: var(--verde-palido); color: var(--verde-texto); }
 .tag-tierra { background: var(--tierra-pale); color: var(--tierra); }
 .tag-amarillo { background: var(--amarillo-pale); color: #7a5800; }
 
@@ -357,7 +424,7 @@ html, body {
   font-size: 11px; padding: 3px 10px;
   border-radius: 99px; font-weight: 500; flex-shrink: 0;
 }
-.badge-verde   { background: var(--verde-palido); color: var(--verde-oscuro); }
+.badge-verde   { background: var(--verde-palido); color: var(--verde-texto); }
 .badge-amarillo{ background: var(--amarillo-pale); color: #7a5800; }
 .badge-rojo    { background: var(--rojo-pale);    color: var(--rojo); }
 
@@ -387,7 +454,7 @@ html, body {
 .mi-planta-info { flex: 1; }
 .mi-planta-nombre {
   font-family: 'Playfair Display', serif;
-  font-size: 15px; font-weight: 500; color: var(--verde-oscuro);
+  font-size: 15px; font-weight: 500; color: var(--verde-texto);
 }
 .mi-planta-especie { font-size: 12px; color: var(--texto-suave); font-style: italic; margin-bottom: 6px; }
 .mi-planta-estado  { font-size: 12px; color: var(--texto-medio); margin-bottom: 8px; }
@@ -401,7 +468,7 @@ html, body {
   font-weight: 400; transition: all 0.2s;
 }
 .btn-sm-verde {
-  background: var(--verde-palido); color: var(--verde-oscuro);
+  background: var(--verde-palido); color: var(--verde-texto);
   border-color: var(--verde-palido);
 }
 .btn-sm-verde:hover { background: var(--verde-claro); color: white; border-color: var(--verde-claro); }
@@ -427,7 +494,7 @@ html, body {
 
 .rec-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
 .rec-emoji  { font-size: 28px; }
-.rec-titulo { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--verde-oscuro); }
+.rec-titulo { font-family: 'Playfair Display', serif; font-size: 15px; color: var(--verde-texto); }
 .rec-especie{ font-size: 12px; color: var(--texto-suave); font-style: italic; }
 
 .rec-barra-wrap {
@@ -508,7 +575,7 @@ html, body {
 .modal-titulo {
   font-family: 'Playfair Display', serif;
   font-size: 20px; font-weight: 700;
-  color: var(--verde-oscuro);
+  color: var(--verde-texto);
   margin-bottom: 1.25rem;
 }
 
@@ -524,7 +591,7 @@ html, body {
 .detalle-emoji { font-size: 56px; margin-bottom: 8px; }
 .detalle-nombre {
   font-family: 'Playfair Display', serif;
-  font-size: 20px; font-weight: 700; color: var(--verde-oscuro);
+  font-size: 20px; font-weight: 700; color: var(--verde-texto);
 }
 .detalle-cientifico { font-size: 13px; color: var(--texto-suave); font-style: italic; }
 

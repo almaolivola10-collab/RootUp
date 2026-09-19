@@ -59,6 +59,27 @@ async function elegirHemisferio(opcion) {
 function cargarHemisferio() {
   hemisferio = localStorage.getItem('ru-hemisferio') || 'sur';
 }
+
+// ══════════════════════════════════════════════════════
+//  TEMA (claro / oscuro)
+// ══════════════════════════════════════════════════════
+
+function aplicarTema(tema) {
+  document.documentElement.setAttribute('data-tema', tema);
+  localStorage.setItem('ru-tema', tema);
+}
+
+function cargarTema() {
+  aplicarTema(localStorage.getItem('ru-tema') || 'claro');
+}
+
+// Se llama desde los botones de la pantalla de perfil
+function cambiarTema(opcion) {
+  aplicarTema(opcion);
+  document.getElementById('perfil-btn-claro').classList.toggle('activo', opcion === 'claro');
+  document.getElementById('perfil-btn-oscuro').classList.toggle('activo', opcion === 'oscuro');
+}
+
 async function cargarPlantas() {
   try {
     const r = await fetch(`${API}/plantas.php`);
@@ -193,6 +214,7 @@ async function irA(id) {
   if (id === 'favoritas')     renderFavoritas();
   if (id === 'mis-plantas')   await renderMisPlantas();
   if (id === 'recordatorios') await renderRecordatorios();
+  if (id === 'perfil')        await renderPerfil();
 
   window.scrollTo(0, 0);
 }
@@ -225,6 +247,8 @@ async function iniciarSesion() {
     if (datos.exito) {
       usuarioActual = datos.usuario;
       guardarUsuario(datos.usuario);
+      actualizarUIAdmin();
+      actualizarUIPerfil();
       errorDiv.textContent = '';
 
       // Cargar datos desde MySQL antes de mostrar la app
@@ -357,7 +381,191 @@ function cerrarSesion() {
   favoritosCache  = [];
   misPlantasCache = [];
   localStorage.removeItem('ru-usuario');
+  actualizarUIAdmin();
+  actualizarUIPerfil();
   irA('login');
+}
+
+// ══════════════════════════════════════════════════════
+//  PANEL ADMIN — agregar plantas al catálogo
+// ══════════════════════════════════════════════════════
+
+// Muestra u oculta el botón flotante según si el usuario logueado es admin
+function actualizarUIAdmin() {
+  const btn = document.getElementById('btn-admin-fab');
+  if (!btn) return;
+  if (usuarioActual && usuarioActual.es_admin) {
+    btn.classList.remove('hidden');
+  } else {
+    btn.classList.add('hidden');
+  }
+}
+
+// Muestra/oculta el avatar de perfil y le pone la inicial del nombre
+function actualizarUIPerfil() {
+  const btn = document.getElementById('btn-perfil-fab');
+  if (!btn) return;
+  if (usuarioActual && usuarioActual.nombre) {
+    btn.textContent = usuarioActual.nombre.trim().charAt(0).toUpperCase();
+    btn.classList.remove('hidden');
+  } else {
+    btn.classList.add('hidden');
+  }
+}
+
+function abrirModalAdmin() {
+  document.getElementById('modal-admin-agregar').classList.remove('hidden');
+}
+
+async function guardarPlantaAdmin() {
+  const nombre = document.getElementById('adm-nombre').value.trim();
+
+  const categorias = Array.from(
+    document.querySelectorAll('#adm-categorias input[type=checkbox]:checked')
+  ).map(c => c.value);
+
+  const estadoDiv = document.getElementById('adm-estado');
+
+  if (!nombre || categorias.length === 0) {
+    estadoDiv.style.color = 'var(--rojo)';
+    estadoDiv.textContent = 'Nombre y al menos una categoría son obligatorios.';
+    return;
+  }
+
+  const body = {
+    usuario_id:           usuarioActual.id,
+    nombre:                nombre,
+    cientifico:            document.getElementById('adm-cientifico').value.trim(),
+    emoji:                 document.getElementById('adm-emoji').value.trim() || '🌱',
+    categoria:             categorias.join(','),
+    tags:                  document.getElementById('adm-tags').value.trim() || null,
+    dias_riego:            document.getElementById('adm-diasriego').value,
+    luz:                   document.getElementById('adm-luz').value.trim(),
+    meses_siembra_sur:     document.getElementById('adm-mesessur').value.trim(),
+    meses_siembra_norte:   document.getElementById('adm-mesesnorte').value.trim(),
+    dificultad:            document.getElementById('adm-dificultad').value,
+    descripcion:           document.getElementById('adm-descripcion').value.trim(),
+    cuidados:              document.getElementById('adm-cuidados').value.trim(),
+    curiosidad:            document.getElementById('adm-curiosidad').value.trim() || null,
+    advertencia:           document.getElementById('adm-advertencia').value.trim() || null,
+    imagen:                document.getElementById('adm-imagen').value.trim(),
+    destacada:             document.getElementById('adm-destacada').checked ? 1 : 0,
+  };
+
+  estadoDiv.style.color = 'var(--verde-medio)';
+  estadoDiv.textContent = 'Guardando...';
+
+  try {
+    const respuesta = await fetch(`${API}/agregar_planta.php`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body)
+    });
+    const datos = await respuesta.json();
+
+    if (datos.exito) {
+      estadoDiv.style.color = 'var(--verde-medio)';
+      estadoDiv.textContent = '✅ Planta agregada.';
+
+      // Recargar el catálogo desde MySQL para que aparezca ya mismo
+      await cargarPlantas();
+      renderBuscar(document.getElementById('input-buscar')?.value || '');
+
+      setTimeout(() => {
+        cerrarModal('modal-admin-agregar');
+        document.getElementById('adm-estado').textContent = '';
+        document.querySelectorAll('#adm-categorias input[type=checkbox]').forEach(c => c.checked = false);
+        ['adm-nombre','adm-cientifico','adm-tags','adm-diasriego','adm-luz','adm-mesessur',
+         'adm-mesesnorte','adm-descripcion','adm-cuidados','adm-curiosidad','adm-advertencia','adm-imagen']
+         .forEach(id => document.getElementById(id).value = '');
+        document.getElementById('adm-destacada').checked = false;
+        document.getElementById('adm-emoji').value = '🌱';
+      }, 900);
+
+    } else {
+      estadoDiv.style.color = 'var(--rojo)';
+      estadoDiv.textContent = '❌ ' + datos.mensaje;
+    }
+  } catch (e) {
+    estadoDiv.style.color = 'var(--rojo)';
+    estadoDiv.textContent = '❌ Error de conexión.';
+    console.error(e);
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  PANTALLA: MI PERFIL
+// ══════════════════════════════════════════════════════
+
+async function renderPerfil() {
+  if (!usuarioActual) return;
+
+  try {
+    const r = await fetch(`${API}/perfil.php?usuario_id=${usuarioActual.id}`);
+    const d = await r.json();
+
+    if (!d.exito) {
+      console.error(d.mensaje);
+      return;
+    }
+
+    const inicial = d.usuario.nombre.trim().charAt(0).toUpperCase();
+    document.getElementById('perfil-avatar-grande').textContent = inicial;
+    document.getElementById('perfil-nombre').textContent = d.usuario.nombre;
+    document.getElementById('perfil-email').textContent = d.usuario.email;
+
+    // "Miembro desde junio de 2026"
+    const fecha = new Date(d.usuario.fecha_registro.replace(' ', 'T'));
+    const texto = fecha.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
+    document.getElementById('perfil-desde').textContent = 'Miembro desde ' + texto;
+
+    // Resaltar el hemisferio activo (usa la variable global `hemisferio`)
+    document.getElementById('perfil-btn-sur').classList.toggle('activo', hemisferio === 'sur');
+    document.getElementById('perfil-btn-norte').classList.toggle('activo', hemisferio === 'norte');
+
+    // Resaltar el tema activo
+    const temaActual = localStorage.getItem('ru-tema') || 'claro';
+    document.getElementById('perfil-btn-claro').classList.toggle('activo', temaActual === 'claro');
+    document.getElementById('perfil-btn-oscuro').classList.toggle('activo', temaActual === 'oscuro');
+
+    // Estadísticas
+    const s = d.stats;
+    document.getElementById('perfil-stats').innerHTML = `
+      <div class="stat-card">
+        <div class="stat-num">${s.total_plantas}</div>
+        <div class="stat-label">Plantas propias</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${s.total_favoritas}</div>
+        <div class="stat-label">Favoritas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">${s.total_riegos}</div>
+        <div class="stat-label">Riegos registrados</div>
+      </div>`;
+
+  } catch (e) {
+    console.error('Error cargando perfil:', e);
+  }
+}
+
+// Cambia el hemisferio desde la pantalla de perfil (sin navegar a otra pantalla)
+async function cambiarHemisferioPerfil(opcion) {
+  hemisferio = opcion;
+  localStorage.setItem('ru-hemisferio', opcion);
+
+  document.getElementById('perfil-btn-sur').classList.toggle('activo', opcion === 'sur');
+  document.getElementById('perfil-btn-norte').classList.toggle('activo', opcion === 'norte');
+
+  try {
+    await fetch(`${API}/actualizar_hemisferio.php`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario_id: usuarioActual.id, hemisferio: opcion })
+    });
+  } catch (e) {
+    console.error('Error actualizando hemisferio:', e);
+  }
 }
 
 // ══════════════════════════════════════════════════════
@@ -949,7 +1157,10 @@ function cerrarModal(id) {
 // ══════════════════════════════════════════════════════
 emailjs.init('gR1az2PRfTIZYX3BC');
 cargarHemisferio();
+cargarTema();
 usuarioActual = cargarUsuario();
+actualizarUIAdmin();
+actualizarUIPerfil();
 
 // Primero cargar las plantas desde MySQL, después iniciar la app
 cargarPlantas().then(() => {
