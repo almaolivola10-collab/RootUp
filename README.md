@@ -34,7 +34,8 @@ Este proyecto forma parte del Proyecto Integrador Anual, que también incluye Sm
 -------------------------------------------------------------
 
 Estructura de carpetas
-
+<pre>
+  
 RootUp/
 ├── docs/                 ← Documentación del proyecto
 │   ├── wireframes/       ← Bocetos de las pantallas
@@ -42,72 +43,72 @@ RootUp/
 │   │    └── boceto.jpg
 │   └── informe.pdf       ← Informe APA v7
 │
-├── img/                  ← Imágenes del proyecto
+├── img/                ← Imágenes del proyecto
+│   ├── buscador app.png
+│   ├── favoritas app.png
+│   ├── inicio app.png
+│   ├── login app.png
+│   ├── plantas app.png
+│   ├── riegos app.png
+│   ├── rootup.jpg
 ├── src/                  ← Código de la app
-│   ├── api/  
+│   ├── api/ 
+│   │    ├── actualizar_hemisferio.php
 │   │    ├── conexion.php
 │   │    ├── favoritos.php
 │   │    ├── login.php
 │   │    ├── mis_plantas.php
+│   │    ├── plantas.php
+│   │    ├── recuperar_password.php
 │   │    ├── registro.php
-│   │    └── riegos.php
-│   ├── index.html        ← Estructura principal (pantallas y modales)
-│   ├── style.css         ← Estilos visuales de toda la app
+│   │    ├── riegos.php
+│   │    ├── variedades.php
 │   ├── app.js            ← Lógica: navegación, filtros, riego, favoritas
-│   └── datos.js          ← Base de datos de plantas
+│   ├── index.html        ← Estructura principal (pantallas y modales)
+│   ├── reset.html        ← Estructura para recuperar la contraseña
+│   └── style.css         ← Estilos visuales de toda la app
 │
 ├── index.php
 ├── README.md             ← Este archivo
 └── rootup.sql            ← Base de datos de la app
-
+  
+</pre>
 -------------------------------------------------------------
 
 Pantallas de la app
-
+<pre>
 Inicio | Saludo, estadísticas rápidas y plantas destacadas
 Buscar| Búsqueda por nombre y por categoría
 Favoritas | Lista de plantas marcadas como favoritas
 Mis plantas | Plantas propias del usuario
 Alertas | Recordatorios de riego con barra de urgencia
-
+</pre>
 -------------------------------------------------------------
 
 Links del proyecto
-
+<pre>
 Prototipo con I.A.: [rootup.base44.app](https://rootup.base44.app)
 App actual: (https://rootup.infinityfreeapp.com/src/index.html)
 Repositorio GitHub: (https://github.com/almaaluzz05/Proyecto-Agro)
-
+</pre>
 -------------------------------------------------------------
 
 Estado del proyecto
 
-Inicio del primer cuatrimestre — Mayo 2026
-
-[x] Base de datos de plantas
-[x] Búsqueda y filtros por categoría
-[x] Sistema de favoritas
-[x] Seguimiento de plantas propias
-[x] Alertas de riego con historial
-[ ] Login con cuenta propia (segundo cuatrimestre)
-[ ] Conexión con SmartPlant (segundo cuatrimestre)
-[ ] Base de datos en la nube (segundo cuatrimestre)
-[ ] App publicada (segundo cuatrimestre)
-
--------------------------------------------------------------
-Estado del proyecto
-
-Final del primer cuatrimestre — Julio 2026
-
-[x] Base de datos de plantas
-[x] Búsqueda y filtros por categoría
-[x] Sistema de favoritas
-[x] Seguimiento de plantas propias
-[x] Alertas de riego con historial
-[x] Login con cuenta propia (segundo cuatrimestre)
-[ ] Conexión con SmartPlant (segundo cuatrimestre)
-[x] Base de datos en la nube
-[x] App publicada (mediante InfinityFree)
+Estado anual de RootUp 2026
+<pre>
+[x] Base de datos de plantas (Marzo/Abril)
+[x] Búsqueda y filtros por categoría (Mayo)
+[x] Sistema de favoritas (Mayo)
+[x] Seguimiento de plantas propias (Mayo)
+[x] Alertas de riego (Junio)
+[x] Login con cuenta propia (Julio)
+[x] App publicada (Julio)
+[x] Base de datos en la nube (Agosto)
+[ ] Panel del administrador (Octubre/Noviembre)
+[ ] Notificaciones (Octubre/Noviembre)
+[ ] Conexión con SmartPlant (Octubre/Noviembre)
+</pre>
 
 -------------------------------------------------------------
 
