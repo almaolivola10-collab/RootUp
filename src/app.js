@@ -641,10 +641,11 @@ function renderBuscar(filtroTexto = '') {
   let resultado = PLANTAS;
 
   if (categoriaActual !== 'todas') {
+    const buscado = categoriaActual.toLowerCase();
     resultado = resultado.filter(p =>
       Array.isArray(p.categoria)
-        ? p.categoria.includes(categoriaActual)
-        : p.categoria === categoriaActual
+        ? p.categoria.some(c => c.toLowerCase() === buscado)
+        : (p.categoria || '').toLowerCase() === buscado
     );
   }
 
