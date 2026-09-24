@@ -72,9 +72,12 @@ RootUp/
 │   ├── reset.html        ← Estructura para recuperar la contraseña
 │   └── style.css         ← Estilos visuales de toda la app
 │
+├── .gitignore
+├── LICENSE
 ├── index.php
 ├── README.md             ← Este archivo
 └── rootup.sql            ← Base de datos de la app
+  
   
 </pre>
 -------------------------------------------------------------
