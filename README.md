@@ -51,6 +51,9 @@ RootUp/
 │   ├── plantas app.png
 │   ├── riegos app.png
 │   ├── rootup.jpg
+│   ├── logo-rootup-blanco.png
+│   ├── logo-rootup.png
+│   ├── logo.jpg
 ├── src/                  ← Código de la app
 │   ├── api/ 
 │   │    ├── actualizar_hemisferio.php
@@ -63,6 +66,7 @@ RootUp/
 │   │    ├── registro.php
 │   │    ├── riegos.php
 │   │    ├── variedades.php
+│   │    ├── perfil.php
 │   ├── app.js            ← Lógica: navegación, filtros, riego, favoritas
 │   ├── index.html        ← Estructura principal (pantallas y modales)
 │   ├── reset.html        ← Estructura para recuperar la contraseña
