@@ -112,7 +112,7 @@ Estado anual de RootUp 2026
 [x] Login con cuenta propia (Julio)
 [x] App publicada (Julio)
 [x] Base de datos en la nube (Agosto)
-[ ] Panel del administrador (Octubre/Noviembre)
+[x] Panel del administrador (Octubre/Noviembre)
 [ ] Notificaciones (Octubre/Noviembre)
 [ ] Conexión con SmartPlant (Octubre/Noviembre)
 </pre>
