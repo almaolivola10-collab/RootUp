@@ -386,6 +386,47 @@ function cerrarSesion() {
   irA('login');
 }
 
+function abrirModalEliminarCuenta() {
+  document.getElementById('input-password-eliminar').value = '';
+  document.getElementById('error-eliminar-cuenta').textContent = '';
+  document.getElementById('modal-eliminar-cuenta').classList.remove('hidden');
+}
+
+async function confirmarEliminarCuenta() {
+  const password  = document.getElementById('input-password-eliminar').value;
+  const errorEl   = document.getElementById('error-eliminar-cuenta');
+  errorEl.textContent = '';
+
+  if (!password) {
+    errorEl.textContent = 'Ingresá tu contraseña para confirmar.';
+    return;
+  }
+  if (!usuarioActual) return;
+
+  try {
+    const r = await fetch(`${API}/eliminar_cuenta.php`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({
+        usuario_id: usuarioActual.id,
+        password:   password
+      })
+    });
+    const d = await r.json();
+
+    if (d.exito) {
+      cerrarModal('modal-eliminar-cuenta');
+      alert('Tu cuenta fue eliminada correctamente.');
+      cerrarSesion();
+    } else {
+      errorEl.textContent = d.mensaje || 'No se pudo eliminar la cuenta.';
+    }
+  } catch (e) {
+    console.error('Error eliminando cuenta:', e);
+    errorEl.textContent = 'Error de conexión. Probá de nuevo.';
+  }
+}
+
 // ══════════════════════════════════════════════════════
 //  PANEL ADMIN — agregar plantas al catálogo
 // ══════════════════════════════════════════════════════
