@@ -36,7 +36,6 @@ $totalPlantas   = contarFilas($conexion, 'mis_plantas', $usuarioId);
 $totalFavoritas = contarFilas($conexion, 'favoritos', $usuarioId);
 $totalRiegos    = contarFilas($conexion, 'riegos', $usuarioId);
 
-
 $stmt = $conexion->prepare(
     "SELECT c.nombre AS categoria
      FROM mis_plantas mp
