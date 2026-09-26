@@ -1,5 +1,5 @@
 <?php
-// perfil.php — Datos de cuenta + estadísticas para la pantalla de Perfil
+// perfil.php — Datos de cuenta + pantalla de Perfil
 
 require_once 'conexion.php';
 
@@ -36,10 +36,12 @@ $totalPlantas   = contarFilas($conexion, 'mis_plantas', $usuarioId);
 $totalFavoritas = contarFilas($conexion, 'favoritos', $usuarioId);
 $totalRiegos    = contarFilas($conexion, 'riegos', $usuarioId);
 
-// ── Categoría más frecuente entre sus plantas propias ──
+
 $stmt = $conexion->prepare(
-    "SELECT p.categoria FROM mis_plantas mp
-     JOIN plantas p ON mp.planta_id = p.id
+    "SELECT c.nombre AS categoria
+     FROM mis_plantas mp
+     JOIN plantas_categorias pc ON pc.planta_id = mp.planta_id
+     JOIN categorias c          ON c.id = pc.categoria_id
      WHERE mp.usuario_id = ?"
 );
 $stmt->bind_param("i", $usuarioId);
@@ -48,13 +50,11 @@ $resultado = $stmt->get_result();
 
 $conteo = [];
 while ($fila = $resultado->fetch_assoc()) {
-    foreach (explode(',', $fila['categoria']) as $c) {
-        $c = trim($c);
-        if ($c === '') continue;
-        $clave = mb_strtolower($c);
-        if (!isset($conteo[$clave])) $conteo[$clave] = ['nombre' => $c, 'total' => 0];
-        $conteo[$clave]['total']++;
-    }
+    $c = trim($fila['categoria']);
+    if ($c === '') continue;
+    $clave = mb_strtolower($c);
+    if (!isset($conteo[$clave])) $conteo[$clave] = ['nombre' => $c, 'total' => 0];
+    $conteo[$clave]['total']++;
 }
 $stmt->close();
 
