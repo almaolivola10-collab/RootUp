@@ -290,7 +290,10 @@
       <div class="seccion-titulo" style="margin-top:1.5rem">Tus números</div>
       <div class="stats-row" id="perfil-stats"></div>
 
-      <button class="btn-accion full" style="margin-top:2rem;background:var(--rojo);" onclick="cerrarSesion()">Cerrar sesión</button>
+      <div style="display:flex;gap:0.75rem;margin-top:2rem;">
+        <button class="btn-accion full" style="background:var(--rojo);" onclick="cerrarSesion()">Cerrar sesión</button>
+        <button class="btn-accion full" style="background:transparent;border:1px solid var(--rojo);color:var(--rojo);" onclick="abrirModalEliminarCuenta()">Eliminar cuenta</button>
+      </div>
     </div>
   </div>
 
@@ -341,6 +344,23 @@
       <label class="form-label">Notas del riego (opcional)</label>
       <input type="text" id="input-nota-riego" class="form-input" placeholder="Ej: La tierra estaba muy seca..." />
       <button class="btn-accion full" onclick="confirmarRiego()">✓ Confirmar riego</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       MODAL: ELIMINAR CUENTA
+  ═══════════════════════════════ -->
+  <div id="modal-eliminar-cuenta" class="modal-overlay hidden" onclick="cerrarModal('modal-eliminar-cuenta')">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-cerrar" onclick="cerrarModal('modal-eliminar-cuenta')">✕</button>
+      <h3 class="modal-titulo">Eliminar cuenta</h3>
+      <p style="font-size:14px;color:var(--texto-suave);margin-bottom:1rem;">
+        Esta acción es <strong>permanente</strong>: se van a borrar tu cuenta, tus plantas guardadas, favoritos y riegos registrados. No se puede deshacer.
+      </p>
+      <label class="form-label">Confirmá tu contraseña para continuar</label>
+      <input type="password" id="input-password-eliminar" class="form-input" placeholder="Tu contraseña" />
+      <p id="error-eliminar-cuenta" style="color:var(--rojo);font-size:13px;margin-top:6px;"></p>
+      <button class="btn-accion full" style="background:var(--rojo);margin-top:0.75rem;" onclick="confirmarEliminarCuenta()">Eliminar mi cuenta definitivamente</button>
     </div>
   </div>
 
