@@ -877,6 +877,7 @@ function abrirModalRiego(miPlantaId) {
 
 async function confirmarRiego() {
   const fecha = document.getElementById('input-fecha-riego').value;
+  const nota  = document.getElementById('input-nota-riego').value;
   if (!fecha) { alert('Ingresá la fecha del riego'); return; }
   if (!usuarioActual) return;
 
@@ -890,14 +891,18 @@ async function confirmarRiego() {
       body:    JSON.stringify({
         usuario_id:  usuarioActual.id,
         planta_id:   p.planta_id,
-        fecha_riego: fecha
+        fecha_riego: fecha,
+        notas:       nota
       })
     });
     const d = await r.json();
     if (d.exito) {
-      // Actualizar el ultimo_riego en la caché local
+      // Actualizar el ultimo_riego y la nota en la caché local
       const idx = misPlantasCache.findIndex(x => x.id === plantaRiegoId);
-      if (idx !== -1) misPlantasCache[idx].ultimo_riego = fecha;
+      if (idx !== -1) {
+        misPlantasCache[idx].ultimo_riego = fecha;
+        misPlantasCache[idx].notas = nota;
+      }
 
       cerrarModal('modal-riego');
 
