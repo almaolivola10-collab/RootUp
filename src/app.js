@@ -200,9 +200,8 @@ async function irA(id) {
   const btnNav = document.getElementById('nav-' + id);
   if (btnNav) btnNav.classList.add('active');
 
-  // Ocultar navbar en login y registro
   const navbar = document.getElementById('navbar');
-  if (id === 'login' || id === 'registro') {
+  if (id === 'login' || id === 'registro' || id === 'recuperar') {
     navbar.classList.add('hidden');
   } else {
     navbar.classList.remove('hidden');
