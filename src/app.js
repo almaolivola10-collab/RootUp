@@ -583,12 +583,58 @@ async function renderPerfil() {
         <div class="stat-num">${s.total_riegos}</div>
         <div class="stat-label">Riegos registrados</div>
       </div>`;
-
+    cargarSmartPlant();
   } catch (e) {
     console.error('Error cargando perfil:', e);
   }
 }
+// ─── SmartPlant: última lectura del sensor (solo si el usuario tiene) ───
+let timerSmartPlant = null;
 
+async function cargarSmartPlant() {
+  const cont = document.getElementById('perfil-smartplant');
+  if (!cont || !usuarioActual) return;
+
+  try {
+    const r = await fetch(`${API}/obtener_lectura.php?usuario_id=${usuarioActual.id}`);
+    const d = await r.json();
+
+    // Sin lecturas: no se muestra nada (así las otras cuentas no ven la tarjeta)
+    if (!d.exito || !d.lectura) {
+      cont.innerHTML = '';
+      return;
+    }
+
+    const l = d.lectura;
+    const fecha = new Date(l.fecha.replace(' ', 'T'));
+    const hora = fecha.toLocaleString('es-AR', {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+
+    const tierra = Number(l.humedad) > 3000 ? 'Tierra seca' : 'Tierra húmeda';
+    const luz    = Number(l.luz) < 500 ? 'Oscuro' : 'Con luz';
+
+    cont.innerHTML = `
+      <h3>🌱 SmartPlant</h3>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+        <div class="stat-card">
+          <div class="stat-num">${Number(l.temperatura).toFixed(1)}°</div>
+          <div class="stat-label">Temperatura</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">${tierra}</div>
+          <div class="stat-label">Suelo (${l.humedad})</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">${luz}</div>
+          <div class="stat-label">Luz (${l.luz})</div>
+        </div>
+      </div>
+      <small>Última lectura: ${hora}</small>`;
+  } catch (e) {
+    console.error('Error cargando SmartPlant:', e);
+  }
+}
 // Cambia el hemisferio desde la pantalla de perfil (sin navegar a otra pantalla)
 async function cambiarHemisferioPerfil(opcion) {
   hemisferio = opcion;
