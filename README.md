@@ -57,10 +57,14 @@ RootUp/
 ├── src/                  ← Código de la app
 │   ├── api/ 
 │   │    ├── actualizar_hemisferio.php
+│   │    ├── agregar_planta.php
+│   │    ├── eliminar_cuenta.php
+│   │    ├── guardar_datos.php
 │   │    ├── conexion.php
 │   │    ├── favoritos.php
 │   │    ├── login.php
 │   │    ├── mis_plantas.php
+│   │    ├── obtener_lecturas.php
 │   │    ├── plantas.php
 │   │    ├── recuperar_password.php
 │   │    ├── registro.php
@@ -114,7 +118,7 @@ Estado anual de RootUp 2026
 [x] Base de datos en la nube (Agosto)
 [x] Panel del administrador (Octubre/Noviembre)
 [ ] Notificaciones (Octubre/Noviembre)
-[ ] Conexión con SmartPlant (Octubre/Noviembre)
+[x] Conexión con SmartPlant (Octubre/Noviembre)
 </pre>
 
 -------------------------------------------------------------
