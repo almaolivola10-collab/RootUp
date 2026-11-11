@@ -1,5 +1,6 @@
 <?php
 require_once 'conexion.php';
+$conexion->query("SET time_zone = '-03:00'");
 
 if (isset($_POST['usuario_id']) && isset($_POST['luz']) && isset($_POST['humedad']) && isset($_POST['temperatura'])) {
 

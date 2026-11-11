@@ -583,7 +583,13 @@ async function renderPerfil() {
         <div class="stat-num">${s.total_riegos}</div>
         <div class="stat-label">Riegos registrados</div>
       </div>`;
-    cargarSmartPlant();
+        cargarSmartPlant();
+    clearInterval(timerSmartPlant);
+    timerSmartPlant = setInterval(() => {
+      const cont = document.getElementById('perfil-smartplant');
+      // solo refresca si el perfil se está viendo
+      if (cont && cont.offsetParent !== null) cargarSmartPlant();
+    }, 30000);
   } catch (e) {
     console.error('Error cargando perfil:', e);
   }
