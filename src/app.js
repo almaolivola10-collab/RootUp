@@ -618,7 +618,7 @@ async function cargarSmartPlant() {
     });
 
     const tierra = Number(l.humedad) > 3000 ? 'Tierra seca' : 'Tierra húmeda';
-    const luz    = Number(l.luz) < 500 ? 'Oscuro' : 'Con luz';
+    const luz = Number(l.luz) > 1500 ? 'Oscuro' : 'Con luz';
 
     cont.innerHTML = `
       <h3>🌱 SmartPlant</h3>
