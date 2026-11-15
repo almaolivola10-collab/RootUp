@@ -703,6 +703,12 @@ function spActualizarValores(l) {
     const vivo = seg < 120;
     pildora.textContent = vivo ? `● En vivo · hace ${spTiempo(seg)}` : `Sin datos recientes · hace ${spTiempo(seg)}`;
     pildora.classList.toggle('vivo', vivo);
+  }  if (Number.isFinite(seg)) {
+    const vivo = seg < 120;
+    pildora.textContent = vivo ? `● En vivo · hace ${spTiempo(seg)}` : `Sin datos recientes · hace ${spTiempo(seg)}`;
+    pildora.classList.toggle('vivo', vivo);
+  } else {
+    pildora.style.display = 'none';
   }
 }
 
