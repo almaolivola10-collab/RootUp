@@ -654,3 +654,19 @@ html, body {
    UTILIDADES
 ══════════════════════════════════ */
 .hidden { display: none !important; }
+
+/* ─── SmartPlant ─── */
+#perfil-smartplant { margin: 16px 0; }
+.sp-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sp-pildora { font-size: 12px; padding: 4px 10px; border-radius: 999px; background: #e3e3e3; color: #555; white-space: nowrap; }
+.sp-pildora.vivo { background: #d9f0e1; color: #1f6b3f; }
+.sp-estado { margin: 8px 0 12px; font-size: 14px; }
+.sp-metricas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+button.sp-metrica { border: 2px solid transparent; cursor: pointer; font: inherit; color: inherit; text-align: center; padding: 12px 6px; }
+button.sp-metrica.activa { border-color: #2f6f4f; }
+.sp-metrica .stat-num { font-size: 22px; }
+.sp-rangos { display: flex; gap: 8px; margin: 12px 0 8px; }
+.sp-rangos button { border: 1px solid #2f6f4f; background: transparent; color: inherit; border-radius: 999px; padding: 4px 14px; cursor: pointer; font: inherit; font-size: 13px; }
+.sp-rangos button.activa { background: #2f6f4f; color: #fff; }
+.sp-grafico { position: relative; height: 220px; padding: 10px; }
+.sp-ayuda { font-size: 12px; opacity: .7; margin: 6px 0 0; }

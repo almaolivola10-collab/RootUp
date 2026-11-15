@@ -1,5 +1,6 @@
 <?php
 // obtener_historial.php — Lecturas del SmartPlant para el gráfico
+// Uso: obtener_historial.php?usuario_id=1&horas=6   (horas: 1, 6 o 24)
 
 require_once 'conexion.php';
 
@@ -12,20 +13,38 @@ if ($usuarioId <= 0) {
 }
 if (!in_array($horas, [1, 6, 24])) $horas = 6;
 
-// La ventana se cuenta desde la última lectura (no depende de la hora del servidor)
+// 1) Fecha de la última lectura de este usuario
+$stmt = $conexion->prepare("SELECT MAX(fecha) AS ultima FROM lecturas WHERE usuario_id = ?");
+$stmt->bind_param("i", $usuarioId);
+$stmt->execute();
+$ultima = $stmt->get_result()->fetch_assoc()['ultima'];
+$stmt->close();
+
+if (!$ultima) {
+    echo json_encode(["exito" => true, "horas" => $horas, "puntos" => []]);
+    exit();
+}
+
+// 2) La ventana se cuenta hacia atrás desde esa última lectura
+$desde = date('Y-m-d H:i:s', strtotime($ultima) - $horas * 3600);
+
 $stmt = $conexion->prepare(
     "SELECT luz, humedad, temperatura, fecha
      FROM lecturas
-     WHERE usuario_id = ?
-       AND fecha >= (SELECT MAX(fecha) FROM lecturas WHERE usuario_id = ?) - INTERVAL ? HOUR
+     WHERE usuario_id = ? AND fecha >= ?
      ORDER BY fecha ASC, id ASC"
 );
-$stmt->bind_param("iii", $usuarioId, $usuarioId, $horas);
+$stmt->bind_param("is", $usuarioId, $desde);
 $stmt->execute();
-$filas = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+$resultado = $stmt->get_result();
+
+$filas = [];
+while ($f = $resultado->fetch_assoc()) {
+    $filas[] = $f;
+}
 $stmt->close();
 
-// Reducimos a ~120 puntos para que el gráfico sea liviano
+// 3) Reducimos a ~120 puntos para que el gráfico sea liviano
 $total = count($filas);
 $paso  = max(1, (int) ceil($total / 120));
 $puntos = [];

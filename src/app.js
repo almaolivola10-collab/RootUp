@@ -594,49 +594,199 @@ async function renderPerfil() {
     console.error('Error cargando perfil:', e);
   }
 }
-// ─── SmartPlant: última lectura del sensor (solo si el usuario tiene) ───
+// ─── SmartPlant: tarjeta interactiva con gráfico ───
 let timerSmartPlant = null;
+let spChart = null;
+let spMetrica = 'temperatura';
+let spHoras = 6;
+let spPuntos = [];
+
+const SP_METRICAS = {
+  temperatura: {
+    titulo: 'Temperatura', color: '#e07a3f', umbrales: [18, 30],
+    ayuda: 'Las líneas punteadas marcan el rango ideal para regar (18 a 30 °C).'
+  },
+  humedad: {
+    titulo: 'Suelo', color: '#2f6f4f', umbrales: [3000],
+    ayuda: 'Más alto = más seco. La línea punteada es el umbral de riego (3000).'
+  },
+  luz: {
+    titulo: 'Luz', color: '#d4a72c', umbrales: [1500],
+    ayuda: 'Más alto = más oscuro. La línea punteada es el umbral de oscuridad (1500).'
+  }
+};
+
+function spTiempo(seg) {
+  if (seg < 60) return `${seg} s`;
+  if (seg < 3600) return `${Math.floor(seg / 60)} min`;
+  return `${Math.floor(seg / 3600)} h`;
+}
+
+function spEstado(l) {
+  const seca = Number(l.humedad) > 3000;
+  const oscuro = Number(l.luz) > 1500;
+  const t = Number(l.temperatura);
+  const tempOk = t >= 18 && t <= 30;
+
+  if (!seca) return '🌿 La tierra tiene humedad: no hace falta regar';
+  if (oscuro && tempOk) return '💧 Tierra seca y condiciones ideales: riega en la próxima lectura';
+
+  const falta = [];
+  if (!oscuro) falta.push('esperando que oscurezca');
+  if (!tempOk) falta.push('temperatura fuera de rango');
+  return '🌵 Tierra seca · ' + falta.join(' y ');
+}
+
+function spArmarEsqueleto(cont) {
+  cont.innerHTML = `
+    <div class="sp-cabecera">
+      <h3>🌱 SmartPlant</h3>
+      <span id="sp-conexion" class="sp-pildora">…</span>
+    </div>
+    <div id="sp-estado" class="sp-estado"></div>
+    <div class="sp-metricas">
+      <button class="stat-card sp-metrica activa" data-m="temperatura">
+        <div class="stat-num" id="sp-v-temperatura">–</div>
+        <div class="stat-label" id="sp-e-temperatura">Temperatura</div>
+      </button>
+      <button class="stat-card sp-metrica" data-m="humedad">
+        <div class="stat-num" id="sp-v-humedad">–</div>
+        <div class="stat-label" id="sp-e-humedad">Suelo</div>
+      </button>
+      <button class="stat-card sp-metrica" data-m="luz">
+        <div class="stat-num" id="sp-v-luz">–</div>
+        <div class="stat-label" id="sp-e-luz">Luz</div>
+      </button>
+    </div>
+    <div class="sp-rangos">
+      <button data-h="1">1 h</button>
+      <button data-h="6" class="activa">6 h</button>
+      <button data-h="24">24 h</button>
+    </div>
+    <div class="stat-card sp-grafico"><canvas id="sp-canvas"></canvas></div>
+    <p id="sp-ayuda" class="sp-ayuda">${SP_METRICAS[spMetrica].ayuda}</p>`;
+
+  // Un solo manejador de clics para métricas y rangos
+  cont.onclick = (e) => {
+    const m = e.target.closest('[data-m]');
+    if (m) {
+      spMetrica = m.dataset.m;
+      cont.querySelectorAll('[data-m]').forEach(b => b.classList.toggle('activa', b === m));
+      document.getElementById('sp-ayuda').textContent = SP_METRICAS[spMetrica].ayuda;
+      spDibujar();
+      return;
+    }
+    const h = e.target.closest('[data-h]');
+    if (h) {
+      spHoras = Number(h.dataset.h);
+      cont.querySelectorAll('[data-h]').forEach(b => b.classList.toggle('activa', b === h));
+      spCargarHistorial();
+    }
+  };
+
+  cont.dataset.listo = '1';
+}
+
+function spActualizarValores(l) {
+  document.getElementById('sp-v-temperatura').textContent = Number(l.temperatura).toFixed(1) + '°';
+  document.getElementById('sp-v-humedad').textContent = l.humedad;
+  document.getElementById('sp-v-luz').textContent = l.luz;
+  document.getElementById('sp-e-humedad').textContent =
+    Number(l.humedad) > 3000 ? 'Suelo · seco' : 'Suelo · húmedo';
+  document.getElementById('sp-e-luz').textContent =
+    Number(l.luz) > 1500 ? 'Luz · oscuro' : 'Luz · con luz';
+  document.getElementById('sp-estado').textContent = spEstado(l);
+
+  const pildora = document.getElementById('sp-conexion');
+  const seg = Number(l.hace_seg);
+  if (Number.isFinite(seg)) {
+    const vivo = seg < 120;
+    pildora.textContent = vivo ? `● En vivo · hace ${spTiempo(seg)}` : `Sin datos recientes · hace ${spTiempo(seg)}`;
+    pildora.classList.toggle('vivo', vivo);
+  }
+}
+
+function spDibujar() {
+  const canvas = document.getElementById('sp-canvas');
+  if (!canvas || typeof Chart === 'undefined') return;
+
+  const m = SP_METRICAS[spMetrica];
+  const etiquetas = spPuntos.map(p =>
+    new Date(p.fecha.replace(' ', 'T')).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+  );
+
+  const datasets = [{
+    label: m.titulo,
+    data: spPuntos.map(p => p[spMetrica]),
+    borderColor: m.color,
+    backgroundColor: m.color + '33',
+    fill: true, tension: 0.3, pointRadius: 0, borderWidth: 2
+  }];
+  m.umbrales.forEach(u => datasets.push({
+    label: 'Umbral',
+    data: spPuntos.map(() => u),
+    borderColor: '#999', borderDash: [6, 4], borderWidth: 1, pointRadius: 0, fill: false
+  }));
+
+  if (spChart) {
+    spChart.data.labels = etiquetas;
+    spChart.data.datasets = datasets;
+    spChart.update();
+    return;
+  }
+  spChart = new Chart(canvas, {
+    type: 'line',
+    data: { labels: etiquetas, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 300 },
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false } },
+      scales: { x: { ticks: { maxTicksLimit: 6 } } }
+    }
+  });
+}
+
+async function spCargarHistorial() {
+  if (!usuarioActual) return;
+  try {
+    const r = await fetch(`${API}/obtener_historial.php?usuario_id=${usuarioActual.id}&horas=${spHoras}`, { cache: 'no-store' });
+    const texto = await r.text();
+    let d;
+    try { d = JSON.parse(texto); } catch { return; }   // llegó la verificación de InfinityFree
+    if (!d.exito) return;
+    spPuntos = d.puntos;
+    spDibujar();
+  } catch (e) {
+    console.error('Error cargando historial SmartPlant:', e);
+  }
+}
 
 async function cargarSmartPlant() {
   const cont = document.getElementById('perfil-smartplant');
   if (!cont || !usuarioActual) return;
 
   try {
-    const r = await fetch(`${API}/obtener_lectura.php?usuario_id=${usuarioActual.id}`);
-    const d = await r.json();
-
-    // Sin lecturas: no se muestra nada (así las otras cuentas no ven la tarjeta)
-    if (!d.exito || !d.lectura) {
-      cont.innerHTML = '';
+    const r = await fetch(`${API}/obtener_lectura.php?usuario_id=${usuarioActual.id}`, { cache: 'no-store' });
+    const texto = await r.text();
+    let d;
+    try { d = JSON.parse(texto); } catch {
+      console.warn('SmartPlant: la respuesta no es JSON (probable verificación de InfinityFree)');
       return;
     }
 
-    const l = d.lectura;
-    const fecha = new Date(l.fecha.replace(' ', 'T'));
-    const hora = fecha.toLocaleString('es-AR', {
-      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
-    });
+    // Sin lecturas: no se muestra nada (las otras cuentas no ven la tarjeta)
+    if (!d.exito || !d.lectura) {
+      if (spChart) { spChart.destroy(); spChart = null; }
+      cont.innerHTML = '';
+      delete cont.dataset.listo;
+      return;
+    }
 
-    const tierra = Number(l.humedad) > 3000 ? 'Tierra seca' : 'Tierra húmeda';
-    const luz = Number(l.luz) > 1500 ? 'Oscuro' : 'Con luz';
-
-    cont.innerHTML = `
-      <h3>🌱 SmartPlant</h3>
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
-        <div class="stat-card">
-          <div class="stat-num">${Number(l.temperatura).toFixed(1)}°</div>
-          <div class="stat-label">Temperatura</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">${tierra}</div>
-          <div class="stat-label">Suelo (${l.humedad})</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">${luz}</div>
-          <div class="stat-label">Luz (${l.luz})</div>
-        </div>
-      </div>
-      <small>Última lectura: ${hora}</small>`;
+    if (!cont.dataset.listo) spArmarEsqueleto(cont);
+    spActualizarValores(d.lectura);
+    spCargarHistorial();
   } catch (e) {
     console.error('Error cargando SmartPlant:', e);
   }
